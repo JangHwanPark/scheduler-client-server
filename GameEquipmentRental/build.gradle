@@ -36,6 +36,25 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+tasks.register('buildReact', Exec) {
+	workingDir 'src/main/frontend'
+	commandLine 'npm', 'run', 'build'
+}
+
+tasks.register('copyReactBuild', Copy) {
+	dependsOn 'buildReact'
+	from 'src/main/frontend/dist'
+	into 'src/main/resources/static'
+}
+
+tasks.named('processResources') {
+	dependsOn 'copyReactBuild'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootJar {
+	dependsOn copyReactBuild
 }
