@@ -8,9 +8,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://infodb.ansan.ac.kr:3306/db2019020_game_rental
-    username: i2019020
-    password: d1594623
+    url: jdbc:mariadb://infodb.ansan.ac.kr:3306/db2451506_game_rental
+    username: i2451506
+    password: qkr#wkd#ghks
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
@@ -29,6 +29,3 @@ logging:
       hibernate:
         SQL: debug
         type: trace
-
-jwt:
-
