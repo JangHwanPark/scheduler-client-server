@@ -1,10 +1,24 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import './scss/index.scss'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+// Components
+import App from './App.tsx'
+import Home from "./components/pages/Home.tsx";
+import Register from "./components/pages/Register.tsx";
+
+const routes = [{
+    path: '/',
+    element: <App/>,
+    children: [
+        {index: true, element: <Home/>},
+        {path: '/register', element: <Register/>},
+    ]
+}]
+
+const router = createBrowserRouter(routes)
+const Root: React.FC = () => {
+    return <RouterProvider router={router}/>
+}
+
+export default Root
