@@ -1,6 +1,7 @@
 package com.game.rental.users.entity;
 
 import com.game.rental.orders.entity.OrdersEntity;
+import com.game.rental.users.dto.JoinDto;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +33,12 @@ public class UserEntity {
     @Column(nullable = false, name = "user_name")
     private String userName;
 
+    @Column(nullable = false, name = "user_phone_number")
+    private String userPhoneNumber;
+
+    @Column(nullable = false, name = "roles")
+    private String roles;
+
     @CreationTimestamp
     @Column(nullable = false, name = "created_at",updatable = false)
     private LocalDateTime createdAt;
@@ -41,4 +49,12 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<OrdersEntity> ordersList = new ArrayList<>();
+
+    public UserEntity toEntity(JoinDto joinDto) {
+        this.loginId = joinDto.getId();
+        this.loginPassword = joinDto.getPassword();
+        this.userName = joinDto.getName();
+        this.userPhoneNumber = joinDto.getPhone();
+        return this;
+    }
 }
