@@ -5,14 +5,17 @@
 </head>
 <body>
 <h1>Login</h1>
-<form th:action="@{/user/login}" method="post">
+<form th:action="@{/login}" method="post">
     <div>
         <label>Username:</label>
-        <input type="text" name="loginId" />
+        <input type="text" name="username" />
     </div>
     <div>
         <label>Password:</label>
         <input type="password" name="password" />
+    </div>
+    <div>
+        <button type="button" onclick="location.href='/page/join'">Register</button>
     </div>
     <div>
         <button type="submit">Login</button>
