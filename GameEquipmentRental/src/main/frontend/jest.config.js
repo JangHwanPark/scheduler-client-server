@@ -5,12 +5,14 @@
 
 export default {
     preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+    testEnvironment: 'jest-environment-jsdom',
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
     transform: {
-        '^.+\\.tsx?$': 'ts-jest',
+        '^.+\\.tsx?$': ['ts-jest', {
+            tsconfig: 'tsconfig.json',
+        }],
     },
     moduleNameMapper: {
         '\\.(css|scss)$': 'identity-obj-proxy',
