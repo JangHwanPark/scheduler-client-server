@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 9090
   servlet:
     encoding:
       charset: utf-8
@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:mariadb://infodb.ansan.ac.kr:3306/db2451506_game_rental
     username: i2451506
-    password: welcome2ansan12!!
+    password: qkr#wkd#ghks
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
