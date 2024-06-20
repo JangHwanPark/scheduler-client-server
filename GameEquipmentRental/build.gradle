@@ -46,7 +46,12 @@ dependencies {
 
 tasks.register('buildReact', Exec) {
 	workingDir 'src/main/frontend'
-	commandLine 'npm', 'run', 'build'
+
+	def os = org.gradle.internal.os.OperatingSystem.current()
+	if (os.isWindows()) commandLine 'C:/Program Files/nodejs/npm.cmd', 'run', 'build'
+	else commandLine 'npm', 'run', 'build'
+
+	environment 'PATH', System.getenv('PATH')
 }
 
 tasks.register('copyReactBuild', Copy) {
