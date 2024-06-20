@@ -1,11 +1,32 @@
-import RegisterForm from "../RegisterForm.tsx";
+import UserForm from "../Form/UserForm.tsx";
+
+interface UserInput {
+    id: string;
+    password: string;
+    passwordConfirm?: string;
+    name?: string;
+    phoneNumber?: string;
+}
 
 export default function Register() {
+    // 입력값 상태
+    const initialValues: UserInput = {
+        id: "",
+        password: "",
+        passwordConfirm: "",
+        name: "",
+        phoneNumber: ""
+    }
+
     return (
         <div>
-            <form action="">
-                <RegisterForm/>
-            </form>
+            <UserForm
+                initialValues={initialValues}
+                endpoint="http://localhost:8081/user/join"
+                onSuccessMessage="회원가입이 완료되었습니다."
+                onFailureMessage="회원가입에 실패했습니다."
+                fields={["id", "password", "passwordConfirm", "name", "phoneNumber"]}
+            />
         </div>
     );
 }
