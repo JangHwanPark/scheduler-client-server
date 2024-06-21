@@ -1,0 +1,7 @@
+.main-wrapper {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}

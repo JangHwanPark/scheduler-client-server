@@ -1,1 +1,11 @@
+// Default SCSS file
 @use "base";
+@use "variables";
+@use "mixins";
+
+// Components
+@use "../components/common/UserForm";
+
+// Layout
+@use "../components/layout/MainWrapper";
+@use "../components/layout/AdminAside";
