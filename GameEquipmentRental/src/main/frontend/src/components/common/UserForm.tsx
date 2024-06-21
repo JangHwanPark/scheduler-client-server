@@ -14,6 +14,8 @@ interface FormProps {
     onSuccessMessage: string;
     onFailureMessage: string;
     fields: Array<keyof UserInput>;
+    title: string;
+    formClassName?: string;
 }
 
 export default function UserForm(
@@ -23,6 +25,8 @@ export default function UserForm(
         onSuccessMessage,
         onFailureMessage,
         fields,
+        title,
+        formClassName
     }: FormProps
 ) {
     // 입력값 상태
@@ -70,53 +74,66 @@ export default function UserForm(
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={`auth-form ${formClassName}`}>
+            <h2>{title}</h2>
             {fields.includes("id") && (
-                <input
-                    type="text"
-                    name="id"
-                    placeholder="아이디를 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.id}
-                />
+                <div className="input-field">
+                    <input
+                        type="text"
+                        name="id"
+                        placeholder="아이디를 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.id}
+                    />
+                </div>
             )}
             {fields.includes("password") && (
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="비밀번호를 입력하세요"
-                    onChange={handleChange}
-                    value={userInput.password}
-                />
+                <div className="input-field">
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="비밀번호를 입력하세요"
+                        onChange={handleChange}
+                        value={userInput.password}
+                    />
+                </div>
             )}
             {fields.includes("passwordConfirm") && (
-                <input
-                    type="password"
-                    name="passwordConfirm"
-                    placeholder="비밀번호를 다시 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.passwordConfirm}
-                />
+                <div className="input-field">
+                    <input
+                        type="password"
+                        name="passwordConfirm"
+                        placeholder="비밀번호를 다시 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.passwordConfirm}
+                    />
+                </div>
             )}
             {fields.includes("name") && (
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="이름을 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.name}
-                />
+                <div className="input-field">
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="이름을 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.name}
+                    />
+                </div>
             )}
             {fields.includes("phoneNumber") && (
-                <input
-                    type="text"
-                    name="phoneNumber"
-                    placeholder="전화번호를 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.phoneNumber}
-                />
+                <div className="input-field">
+                    <input
+                        type="text"
+                        name="phoneNumber"
+                        placeholder="전화번호를 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.phoneNumber}
+                    />
+                </div>
             )}
-            <button type="submit">제출</button>
+            <button type="submit" className="submit-btn solid">
+                제출
+            </button>
         </form>
     );
 }

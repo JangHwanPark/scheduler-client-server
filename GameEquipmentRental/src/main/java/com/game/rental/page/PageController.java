@@ -21,7 +21,8 @@ public class PageController {
     public String login() {
         // React 로그인 페이지 URL로 변경
         // return "LoginPage";
-        return "redirect:http://localhost:5173/page/login";
+        // return "redirect:http://localhost:5173/page/login";
+        return "forward:/index.html";
     }
 
     @GetMapping("/result")
