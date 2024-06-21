@@ -3,7 +3,7 @@ import axios, {AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
 
 // Service
-import { validateEmail, validatePassword } from '../../service';
+import {validateUserInput} from '../../service';
 
 // Type
 import {UserInput} from "../../types";
@@ -25,6 +25,7 @@ export default function UserForm(
         fields,
     }: FormProps
 ) {
+    // 입력값 상태
     const [userInput, setUserInput] = useState<UserInput>(initialValues);
 
     // input 값 변경 시 상태 변경
@@ -53,22 +54,16 @@ export default function UserForm(
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!validateEmail(userInput.id)) {
-            alert("이메일 형식이 올바르지 않습니다.");
-            return;
-        }
+        validateUserInput(userInput);
 
-        if (!validatePassword(userInput.password)) {
-            alert("비밀번호는 8자 이상이어야 합니다.");
-            return;
-        }
-
-        if (userInput.password !== userInput.passwordConfirm) {
-            alert("비밀번호가 일치하지 않습니다.");
-            return;
-        }
-
-        mutation.mutate(userInput);
+        // 유효성 검사 통과시 회원가입 요청을 보냄
+        mutation.mutate({
+            id: userInput.id,
+            password: userInput.password,
+            passwordConfirm: userInput.passwordConfirm ?? '',
+            name: userInput.name ?? '',
+            phoneNumber: userInput.phoneNumber ?? ''
+        });
     }
 
     return (

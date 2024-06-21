@@ -1,4 +1,6 @@
 export {
     validateEmail,
-    validatePassword
+    validatePassword,
+    validateTrim,
+    validateUserInput
 } from './validationService';
