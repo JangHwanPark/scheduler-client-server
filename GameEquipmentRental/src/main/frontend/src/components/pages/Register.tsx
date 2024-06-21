@@ -1,11 +1,11 @@
-import UserForm from "../Form/UserForm.tsx";
+import UserForm from "../common/UserForm.tsx";
 
 interface UserInput {
     id: string;
     password: string;
-    passwordConfirm?: string;
-    name?: string;
-    phoneNumber?: string;
+    passwordConfirm: string;
+    name: string;
+    phoneNumber: string;
 }
 
 export default function Register() {
