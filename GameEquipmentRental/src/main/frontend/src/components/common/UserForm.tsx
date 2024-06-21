@@ -2,13 +2,11 @@ import {ChangeEvent, FormEvent, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
 
-interface UserInput {
-    id: string;
-    password: string;
-    passwordConfirm?: string;
-    name?: string;
-    phoneNumber?: string;
-}
+// Service
+import { validateEmail, validatePassword } from '../../service';
+
+// Type
+import {UserInput} from "../../types";
 
 interface FormProps {
     initialValues: UserInput;
@@ -55,6 +53,21 @@ export default function UserForm(
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!validateEmail(userInput.id)) {
+            alert("이메일 형식이 올바르지 않습니다.");
+            return;
+        }
+
+        if (!validatePassword(userInput.password)) {
+            alert("비밀번호는 8자 이상이어야 합니다.");
+            return;
+        }
+
+        if (userInput.password !== userInput.passwordConfirm) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
         mutation.mutate(userInput);
     }
 
@@ -66,6 +79,7 @@ export default function UserForm(
                     name="id"
                     placeholder="아이디를 입력해 주세요"
                     onChange={handleChange}
+                    value={userInput.id}
                 />
             )}
             {fields.includes("password") && (
@@ -74,6 +88,7 @@ export default function UserForm(
                     name="password"
                     placeholder="비밀번호를 입력하세요"
                     onChange={handleChange}
+                    value={userInput.password}
                 />
             )}
             {fields.includes("passwordConfirm") && (
@@ -82,6 +97,7 @@ export default function UserForm(
                     name="passwordConfirm"
                     placeholder="비밀번호를 다시 입력해 주세요"
                     onChange={handleChange}
+                    value={userInput.passwordConfirm}
                 />
             )}
             {fields.includes("name") && (
@@ -90,6 +106,7 @@ export default function UserForm(
                     name="name"
                     placeholder="이름을 입력해 주세요"
                     onChange={handleChange}
+                    value={userInput.name}
                 />
             )}
             {fields.includes("phoneNumber") && (
@@ -98,6 +115,7 @@ export default function UserForm(
                     name="phoneNumber"
                     placeholder="전화번호를 입력해 주세요"
                     onChange={handleChange}
+                    value={userInput.phoneNumber}
                 />
             )}
             <button type="submit">제출</button>
