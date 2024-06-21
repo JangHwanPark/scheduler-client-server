@@ -1,9 +1,8 @@
-import { MainWrapper, MainHeader, AdminAside } from '../layout';
+import { MainWrapper, AdminAside } from '../layout';
 
 export default function Admin() {
     return (
         <MainWrapper>
-            <MainHeader/>
             <AdminAside/>
         </MainWrapper>
     );

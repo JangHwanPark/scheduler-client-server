@@ -1,10 +1,9 @@
-import MainHeader from "../layout/MainHeader.tsx";
 import MainWrapper from "../layout/MainWrapper.tsx";
 
 export default function Home() {
     return (
         <MainWrapper>
-            <MainHeader/>
+            <h1>Home</h1>
         </MainWrapper>
     );
 }

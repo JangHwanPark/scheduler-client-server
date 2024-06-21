@@ -2,7 +2,7 @@ import {ReactNode} from "react";
 
 export default function MainWrapper({children}: {children: ReactNode}) {
     return (
-        <div>
+        <div className="main-wrapper">
             {children}
         </div>
     );
