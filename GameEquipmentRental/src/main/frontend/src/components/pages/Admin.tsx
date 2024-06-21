@@ -1,6 +1,4 @@
-import AdminAside from "../layout/AdminAside.tsx";
-import MainWrapper from "../layout/MainWrapper.tsx";
-import MainHeader from "../layout/MainHeader.tsx";
+import { MainWrapper, MainHeader, AdminAside } from '../layout';
 
 export default function Admin() {
     return (
