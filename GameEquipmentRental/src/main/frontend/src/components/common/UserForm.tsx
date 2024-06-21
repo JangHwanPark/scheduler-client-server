@@ -45,6 +45,9 @@ export default function UserForm(
         onSuccess: (response: AxiosResponse) => {
             console.log(response);
             alert(onSuccessMessage);
+
+            // 로그인 성공 시 리다이렉트
+            window.location.href = "/page/result";
         },
         onError: (error: any) => {
             console.log(error);

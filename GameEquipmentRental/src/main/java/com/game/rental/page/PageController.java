@@ -12,12 +12,16 @@ public class PageController {
     @GetMapping("/join")
     public String join(Model model) {
         model.addAttribute("user", new JoinDto());
-        return "RegisterPage";
+        // React 회원가입 페이지 URL로 변경
+        // return "RegisterPage";
+        return "redirect:http://localhost:5173/page/register";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "LoginPage";
+        // React 로그인 페이지 URL로 변경
+        // return "LoginPage";
+        return "redirect:http://localhost:5173/page/login";
     }
 
     @GetMapping("/result")

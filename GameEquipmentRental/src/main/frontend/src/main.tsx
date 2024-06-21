@@ -17,7 +17,7 @@ const routes = [{
     element: <App/>,
     children: [
         {index: true, element: <Home/>},
-        {path: '/login', element: <Login/>},
+        {path: '/page/login', element: <Login/>},
         {path: '/register', element: <Register/>},
         {path: '/admin', element: <Admin/>},
     ]
