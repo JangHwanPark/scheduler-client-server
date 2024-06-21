@@ -1,7 +1,7 @@
 package com.game.rental.security.config;
 
 import com.game.rental.security.CustomAuthenticationFailureHandler;
-import com.game.rental.users.CustomUserDetailsService;
+import com.game.rental.security.detail.CustomUserDetailsService;
 import com.game.rental.users.entity.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +51,8 @@ public class SecurityConfig {
                             .requestMatchers("/api1").hasRole("user")
                             .requestMatchers("/admin/**", "/api2").hasRole("admin")
                             .anyRequest().authenticated()
-                )
+                );
+        http
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/page/login") // 로그인 페이지 경로
@@ -61,10 +62,24 @@ public class SecurityConfig {
                                 .defaultSuccessUrl("/page/result", true) // 로그인 성공 시 이동할 페이지
                                 .failureHandler(new CustomAuthenticationFailureHandler()) // 로그인 실패 핸들러
                                 .permitAll()
-                )
+                );
+        http
                 .logout((logout) ->
                         logout.logoutUrl("/user/logout").permitAll()
                 );
+        // 다중 로그인을 위한 설정
+        http
+                .sessionManagement((auth) ->
+                        auth
+                                .maximumSessions(1)
+                                .maxSessionsPreventsLogin(false)
+                        );
+        // 세션 고정 보호를 위한 설정
+        http
+                .sessionManagement((auth) ->
+                            auth
+                                    .sessionFixation().changeSessionId()
+                        );
         return http.build();
     }
 

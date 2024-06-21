@@ -5,6 +5,8 @@ server:
       charset: utf-8
       enabled: true
       force: true
+    session:
+      timeout: 60m
 
 spring:
   datasource:
