@@ -52,6 +52,9 @@ tasks.register('buildReact', Exec) {
 	else commandLine 'npm', 'run', 'build'
 
 	environment 'PATH', System.getenv('PATH')
+	doLast {
+		println 'React build finished'
+	}
 }
 
 tasks.register('copyReactBuild', Copy) {
@@ -60,12 +63,32 @@ tasks.register('copyReactBuild', Copy) {
 	into 'src/main/resources/static'
 }
 
+tasks.register('startReact', Exec) {
+	workingDir 'src/main/frontend'
+
+	def os = org.gradle.internal.os.OperatingSystem.current()
+	if (os.isWindows()) commandLine 'C:/Program Files/nodejs/npm.cmd', 'run', 'dev'
+	else commandLine 'npm', 'run', 'dev'
+
+	environment 'PATH', System.getenv('PATH')
+	doLast {
+		println 'React development server started'
+	}
+}
+
 tasks.named('processResources') {
 	dependsOn 'copyReactBuild'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+	dependsOn 'startReact'
+	doFirst {
+		tasks.named('startReact').get().mustRunAfter 'clean'
+	}
 }
 
 bootJar {

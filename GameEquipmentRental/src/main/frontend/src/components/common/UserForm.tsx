@@ -7,6 +7,9 @@ import {validateUserInput} from '../../service';
 
 // Type
 import {UserInput} from "../../types";
+import {FaRegUser} from "react-icons/fa";
+import {MdOutlineDriveFileRenameOutline, MdOutlineLock} from "react-icons/md";
+import {FaPhoneFlip} from "react-icons/fa6";
 
 interface FormProps {
     initialValues: UserInput;
@@ -14,6 +17,7 @@ interface FormProps {
     onSuccessMessage: string;
     onFailureMessage: string;
     fields: Array<keyof UserInput>;
+    submitButtonText?: string;
 }
 
 export default function UserForm(
@@ -23,6 +27,7 @@ export default function UserForm(
         onSuccessMessage,
         onFailureMessage,
         fields,
+        submitButtonText
     }: FormProps
 ) {
     // 입력값 상태
@@ -45,8 +50,11 @@ export default function UserForm(
         onSuccess: (response: AxiosResponse) => {
             console.log(response);
             alert(onSuccessMessage);
+
+            // 로그인 성공 시 리다이렉트
+            window.location.href = "/admin";
         },
-        onError: (error: any) => {
+        onError: (error: never) => {
             console.log(error);
             alert(onFailureMessage);
         }
@@ -67,53 +75,82 @@ export default function UserForm(
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form login">
             {fields.includes("id") && (
-                <input
-                    type="text"
-                    name="id"
-                    placeholder="아이디를 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.id}
-                />
+                <div className="input-field">
+                    <label htmlFor="login-userid">
+                        <FaRegUser />
+                    </label>
+                    <input
+                        id="login-userid"
+                        type="text"
+                        name="id"
+                        placeholder="아이디를 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.id}
+                    />
+                </div>
             )}
             {fields.includes("password") && (
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="비밀번호를 입력하세요"
-                    onChange={handleChange}
-                    value={userInput.password}
-                />
+                <div className="input-field">
+                    <label htmlFor="login-password">
+                        <MdOutlineLock />
+                    </label>
+                    <input
+                        id="login-password"
+                        type="password"
+                        name="password"
+                        placeholder="비밀번호를 입력하세요"
+                        onChange={handleChange}s
+                        value={userInput.password}
+                    />
+                </div>
             )}
             {fields.includes("passwordConfirm") && (
-                <input
-                    type="password"
-                    name="passwordConfirm"
-                    placeholder="비밀번호를 다시 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.passwordConfirm}
-                />
+                <div className="input-field">
+                    <label htmlFor="login-password">
+                        <MdOutlineLock/>
+                    </label>
+                    <input
+                        type="password"
+                        name="passwordConfirm"
+                        placeholder="비밀번호를 다시 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.passwordConfirm}
+                    />
+                </div>
             )}
             {fields.includes("name") && (
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="이름을 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.name}
-                />
+                <div className="input-field">
+                    <label htmlFor="login-password">
+                        <MdOutlineDriveFileRenameOutline />
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="이름을 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.name}
+                    />
+                </div>
             )}
             {fields.includes("phoneNumber") && (
-                <input
-                    type="text"
-                    name="phoneNumber"
-                    placeholder="전화번호를 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.phoneNumber}
-                />
+                <div className="input-field">
+                    <label htmlFor="login-password">
+                        <FaPhoneFlip />
+                    </label>
+                    <input
+                        type="text"
+                        name="phoneNumber"
+                        placeholder="전화번호를 입력해 주세요"
+                        onChange={handleChange}
+                        value={userInput.phoneNumber}
+                    />
+                </div>
             )}
-            <button type="submit">제출</button>
+            <button type="submit">
+                {submitButtonText}
+            </button>
         </form>
     );
 }

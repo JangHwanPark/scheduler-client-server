@@ -55,7 +55,8 @@ public class SecurityConfig {
         http
                 .formLogin(formLogin ->
                         formLogin
-                                .loginPage("/page/login") // 로그인 페이지 경로
+                                //.loginPage("/page/login") // 로그인 페이지 경로
+                                .loginPage("http://localhost:5173/page/login") // React 로그인 페이지 URL로 변경
                                 .loginProcessingUrl("/login") // 로그인 처리 URL
                                 .usernameParameter("username") // 폼의 사용자명 필드 이름
                                 .passwordParameter("password") // 폼의 비밀번호 필드 이름
