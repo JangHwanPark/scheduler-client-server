@@ -12,7 +12,7 @@ const sideMenu = [
     {
         href: '/admin/equipment',
         icon: <LuGamepad2 />,
-        name: '장비 관리'
+        name: '기기 관리'
     },
     {
         href: '/admin/rental',
