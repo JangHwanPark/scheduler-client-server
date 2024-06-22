@@ -10,7 +10,6 @@ import Home from "./components/pages/Home.tsx";
 import Register from "./components/pages/Register.tsx";
 import Login from "./components/pages/Login.tsx";
 import Admin from "./components/pages/Admin.tsx";
-import TestComponents from "./components/pages/TestComponents.tsx";
 
 // Todo: index 페이지 변경 (로그인 페이지로)
 const routes = [{
@@ -21,7 +20,6 @@ const routes = [{
         {path: '/login', element: <Login/>},
         {path: '/register', element: <Register/>},
         {path: '/admin', element: <Admin/>},
-        {path: '/test', element: <TestComponents/>},
     ]
 }];
 
