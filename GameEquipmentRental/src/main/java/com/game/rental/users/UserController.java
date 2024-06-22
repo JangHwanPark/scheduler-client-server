@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 @RestController
@@ -24,16 +25,20 @@ public class UserController {
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinDto user) {
-        logger.info("Received join request: {}", user);
+        //logger.info("Received join request: {}", user);
+        System.out.println("아이디" + user.getId());
+        System.out.println("비밀번호" + user.getPassword());
+        System.out.println("이름" + user.getName());
+        System.out.println("폰" + user.getPhone());
 
-        if(userService.joinUser(user)) {
-            logger.info("Received join request: {}", user);
-            return ResponseEntity.ok().build();
+        if (userService.joinUser(user)) {
+            //logger.info("Successfully registered user: {}", user);
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "User registered successfully"));
         }
 
-        logger.warn("Failed to register user: {}", user);
-        System.out.println("Failed to register user: " + user);
-        return ResponseEntity.badRequest().build();
+        //logger.warn("Failed to register user: {}", user);
+        return ResponseEntity.badRequest().body(Collections.singletonMap("message", "User registration failed"));
+
     }
 
     @GetMapping("/info")

@@ -1,5 +1,5 @@
 import {ChangeEvent, FormEvent, useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
 
 // Icon
@@ -27,7 +27,7 @@ const iconMap: { [key in keyof UserInput]: JSX.Element } = {
     password: <MdOutlineLock />,
     passwordConfirm: <MdOutlineLock />,
     name: <MdOutlineDriveFileRenameOutline />,
-    phoneNumber: <FaPhoneFlip />
+    phone: <FaPhoneFlip />
 }
 
 const placeholderMap: { [key in keyof UserInput]: string } = {
@@ -35,7 +35,7 @@ const placeholderMap: { [key in keyof UserInput]: string } = {
     password: "비밀번호를 입력하세요",
     passwordConfirm: "비밀번호를 다시 입력해 주세요",
     name: "이름을 입력해 주세요",
-    phoneNumber: "전화번호를 입력해 주세요"
+    phone: "전화번호를 입력해 주세요"
 };
 
 export default function UserForm(
@@ -63,39 +63,49 @@ export default function UserForm(
     // 회원가입 요청
     const mutation = useMutation({
         mutationFn: (newUser: UserInput) => {
-            return axios.post(endpoint, newUser)
+            console.log("요청 데이터:", newUser); // 요청 데이터 확인 로그
+            return axios.post(endpoint, newUser, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
         },
         onSuccess: (response: AxiosResponse) => {
-            console.log(response);
+            console.log("회원가입 요청 성공:", response);
             alert(onSuccessMessage);
 
-            // 로그인 성공 시 리다이렉트
-            window.location.href = "/admin";
+            // 요청 성공 시 리다이렉트
+            // window.location.href = "/admin";
         },
-        onError: (error: never) => {
-            console.log(error);
+        onError: (error: AxiosError) => {
+            console.error("회원가입 요청 실패:", error);
+            if (error.response) {
+                console.error("응답 데이터:", error.response.data);
+                console.error("응답 상태 코드:", error.response.status);
+                console.error("응답 헤더:", error.response.headers);
+            } else if (error.request) {
+                console.error("요청이 전송되었으나 응답을 받지 못함:", error.request);
+            } else {
+                console.error("요청 설정 중 에러 발생:", error.message);
+            }
             alert(onFailureMessage);
         }
     });
 
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log("회원가입 요청 전:", userInput);
         validateUserInput(userInput);
-
-        // 유효성 검사 통과시 회원가입 요청을 보냄
-        mutation.mutate({
-            id: userInput.id,
-            password: userInput.password,
-            passwordConfirm: userInput.passwordConfirm ?? '',
-            name: userInput.name ?? '',
-            phoneNumber: userInput.phoneNumber ?? ''
-        });
-    }
+        mutation.mutate(userInput);
+        console.log("회원가입 요청 중:", userInput);
+    };
 
     return (
         <form onSubmit={handleSubmit} className="form login">
             {fields.map((field => (
-                <div className="input-field">
+                <div className="input-field" key={field}>
                     <label htmlFor={`login-${field}`}>
                         {iconMap[field]}
                     </label>

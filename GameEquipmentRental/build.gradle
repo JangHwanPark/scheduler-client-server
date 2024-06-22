@@ -24,6 +24,9 @@ repositories {
 }
 
 dependencies {
+	// 자동 재시작을 위한 디펜던시
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'

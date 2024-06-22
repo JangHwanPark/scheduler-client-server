@@ -7,7 +7,7 @@ interface UserInput {
     password: string;
     passwordConfirm: string;
     name: string;
-    phoneNumber: string;
+    phone: string;
 }
 
 export default function Register() {
@@ -17,7 +17,7 @@ export default function Register() {
         password: "",
         passwordConfirm: "",
         name: "",
-        phoneNumber: ""
+        phone: ""
     }
 
     // Todo: 컴포넌트 분리 필요
@@ -28,7 +28,7 @@ export default function Register() {
                 endpoint="http://localhost:8081/user/join"
                 onSuccessMessage="회원가입이 완료되었습니다."
                 onFailureMessage="회원가입에 실패했습니다."
-                fields={["id", "password", "passwordConfirm", "name", "phoneNumber"]}
+                fields={["id", "password", "passwordConfirm", "name", "phone"]}
                 submitButtonText="회원가입"
             />
             <Link to="/admin">어드민</Link>

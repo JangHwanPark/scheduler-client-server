@@ -3,5 +3,5 @@ export interface UserInput {
     password: string;
     passwordConfirm?: string;
     name?: string;
-    phoneNumber?: string;
+    phone?: string;
 }
