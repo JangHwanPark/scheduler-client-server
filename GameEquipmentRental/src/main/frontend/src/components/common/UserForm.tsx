@@ -72,14 +72,14 @@ export default function UserForm(
             });
         },
         onSuccess: (response: AxiosResponse) => {
-            console.log("회원가입 요청 성공:", response);
+            console.log(`${submitButtonText} 요청 성공:, ${response}`);
             alert(onSuccessMessage);
 
             // 요청 성공 시 리다이렉트
             // window.location.href = "/admin";
         },
         onError: (error: AxiosError) => {
-            console.error("회원가입 요청 실패:", error);
+            console.error(`${submitButtonText} 요청 실패:, ${error}`);
             if (error.response) {
                 console.error("응답 데이터:", error.response.data);
                 console.error("응답 상태 코드:", error.response.status);
@@ -96,10 +96,10 @@ export default function UserForm(
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("회원가입 요청 전:", userInput);
+        console.log(`${submitButtonText} 요청 전: ${JSON.stringify(userInput)}`);
         validateUserInput(userInput);
         mutation.mutate(userInput);
-        console.log("회원가입 요청 중:", userInput);
+        console.log(`${submitButtonText} 요청 중: ${JSON.stringify(userInput)}`);
     };
 
     return (

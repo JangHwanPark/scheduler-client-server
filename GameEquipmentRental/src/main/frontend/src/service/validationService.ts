@@ -44,7 +44,7 @@ export const validateUserInput = (userInput: UserInput): boolean => {
         return false;
     }
 
-    if (!validateTrim(userInput.phoneNumber ?? "")) {
+    if (!validateTrim(userInput.phone ?? "")) {
         alert("전화번호를 입력해 주세요.");
         return false;
     }

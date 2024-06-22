@@ -1,6 +1,7 @@
 package com.game.rental.users;
 
 import com.game.rental.users.dto.JoinDto;
+import com.game.rental.users.dto.LoginDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,15 @@ public class UserController {
     // 로그를 찍기 위한 Logger 객체 생성
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+
+    // Test
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        logger.info("Received login request: {}", loginDto);
+        System.out.println("아이디" + loginDto.getId());
+        System.out.println("비밀번호" + loginDto.getPassword());
+        return null;
+    }
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinDto user) {
