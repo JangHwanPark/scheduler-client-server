@@ -32,7 +32,7 @@ export default function Register() {
                 submitButtonText="회원가입"
             />
             <Link to="/admin">어드민</Link>
-            <Link to="/login">로그인</Link>
+            <Link to="/">로그인</Link>
         </FormContainer>
     );
 }

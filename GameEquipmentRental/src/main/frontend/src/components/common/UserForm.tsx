@@ -101,7 +101,7 @@ export default function UserForm(
                         type="password"
                         name="password"
                         placeholder="비밀번호를 입력하세요"
-                        onChange={handleChange}s
+                        onChange={handleChange}
                         value={userInput.password}
                     />
                 </div>
