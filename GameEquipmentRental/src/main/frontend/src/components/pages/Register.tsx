@@ -1,4 +1,5 @@
 import UserForm from "../common/UserForm.tsx";
+import {Link} from "react-router-dom";
 
 interface UserInput {
     id: string;
@@ -28,6 +29,8 @@ export default function Register() {
                 onFailureMessage="회원가입에 실패했습니다."
                 fields={["id", "password", "passwordConfirm", "name", "phoneNumber"]}
             />
+            <Link to="/admin">어드민</Link>
+            <Link to="/login">로그인</Link>
         </div>
     );
 }
