@@ -2,6 +2,8 @@ package com.game.rental.users;
 
 import com.game.rental.users.dto.JoinDto;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,13 +18,21 @@ import java.util.Iterator;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
+    // 로그를 찍기 위한 Logger 객체 생성
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinDto user) {
+        logger.info("Received join request: {}", user);
+
         if(userService.joinUser(user)) {
+            logger.info("Received join request: {}", user);
             return ResponseEntity.ok().build();
         }
+
+        logger.warn("Failed to register user: {}", user);
+        System.out.println("Failed to register user: " + user);
         return ResponseEntity.badRequest().build();
     }
 

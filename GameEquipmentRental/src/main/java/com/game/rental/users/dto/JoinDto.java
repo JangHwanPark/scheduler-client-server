@@ -9,4 +9,14 @@ public class JoinDto {
     private String password;
     private String name;
     private String phone;
+
+    @Override
+    public String toString() {
+        return "JoinDto{" +
+                "id='" + id + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }
