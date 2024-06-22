@@ -24,6 +24,8 @@ spring:
         format_sql: true
         show_sql: true
     database-platform: org.hibernate.dialect.MariaDB106Dialect
+  jwt:
+    secret: ae13fb186ac0aa56b38a3f03be57578f262bd7a4434beccbf2c5bbd3628ae2017bc713e565a6ebd139ed1430a29edab9324f88c604e44f3e5bf048ee99b8d1f3
 
 logging:
   level:
