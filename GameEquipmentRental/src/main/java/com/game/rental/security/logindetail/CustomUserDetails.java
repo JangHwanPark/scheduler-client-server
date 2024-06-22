@@ -1,4 +1,4 @@
-package com.game.rental.security.detail;
+package com.game.rental.security.logindetail;
 
 import com.game.rental.users.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
@@ -42,21 +41,21 @@ public class CustomUserDetails implements UserDetails {
     // 아래의 매소드 들은 사용자의 아이디가 만료, 잠김, 사용가능 한지에 대한 여부를 반환하는 메서드 입니다.
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

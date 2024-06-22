@@ -1,4 +1,4 @@
-package com.game.rental.security.detail;
+package com.game.rental.security.logindetail;
 
 import com.game.rental.users.entity.UserEntity;
 import com.game.rental.users.entity.UserEntityRepository;
