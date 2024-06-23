@@ -4,6 +4,7 @@ package com.game.rental.security.config;
 import com.game.rental.security.jwt.filter.JWTFIlter;
 import com.game.rental.security.jwt.filter.LoginFilter;
 import com.game.rental.security.jwt.util.JWTUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -59,7 +64,32 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // cors 세팅
+        http
+                .cors((cors) ->
+                        cors.configurationSource(new CorsConfigurationSource() {
 
+                            @Override
+                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                                CorsConfiguration config = new CorsConfiguration();
+
+                                //프론트에서 데이터를 요청 및 보내기 때문에 프론트의 포트 번호를 설정
+                                config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                                // GET, POST, PUT, DELETE, OPTION을 모두 허용할 것이기 때문에 *로 지정
+                                config.setAllowedMethods(Collections.singletonList("*"));
+                                // 프론트 부분에서 credentials 설정 시 모두 허용하기 위해 true 설정
+                                config.setAllowCredentials(true);
+                                // 허용할 Header 설정
+                                config.setAllowedHeaders(Collections.singletonList("*"));
+                                // 허용할 시간을 설정
+                                config.setMaxAge(3600L);
+                                // 서버에서 클라이언트로 사용자에게 JWT를 담아 넘겨줄 헤더를 지정
+                                config.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                                return config;
+                            }
+                        })
+                );
         return http.build();
     }
 }
