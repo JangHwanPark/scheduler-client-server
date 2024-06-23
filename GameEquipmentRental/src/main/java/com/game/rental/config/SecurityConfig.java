@@ -1,4 +1,4 @@
-package com.game.rental.security.config;
+package com.game.rental.config;
 
 
 import com.game.rental.security.jwt.filter.JWTFIlter;

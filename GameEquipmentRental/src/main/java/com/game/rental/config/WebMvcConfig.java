@@ -1,4 +1,4 @@
-package com.game.rental.security.config;
+package com.game.rental.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

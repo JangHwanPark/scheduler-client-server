@@ -13,13 +13,14 @@ import {validateUserInput} from '../../service';
 // Type
 import {UserInput} from "../../types";
 
-interface FormProps {
-    initialValues: UserInput;
+interface FormProps<T> {
+    initialValues: T;
     endpoint: string;
     onSuccessMessage: string;
     onFailureMessage: string;
-    fields: Array<keyof UserInput>;
+    fields: Array<keyof T>;
     submitButtonText?: string;
+    headers: { [key: string]: string };
 }
 
 const iconMap: { [key in keyof UserInput]: JSX.Element } = {
@@ -38,18 +39,20 @@ const placeholderMap: { [key in keyof UserInput]: string } = {
     phone: "전화번호를 입력해 주세요"
 };
 
-export default function UserForm(
+// Todo: 로그인로직 타입에러 복구
+export default function UserForm<T>(
     {
         initialValues,
         endpoint,
         onSuccessMessage,
         onFailureMessage,
         fields,
-        submitButtonText
-    }: FormProps
+        submitButtonText,
+        headers
+    }: FormProps<T>
 ) {
     // 입력값 상태
-    const [userInput, setUserInput] = useState<UserInput>(initialValues);
+    const [userInput, setUserInput] = useState<T>(initialValues);
 
     // input 값 변경 시 상태 변경
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -64,12 +67,33 @@ export default function UserForm(
     const mutation = useMutation({
         mutationFn: (newUser: UserInput) => {
             console.log("요청 데이터:", newUser); // 요청 데이터 확인 로그
-            return axios.post(endpoint, newUser, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+            let data;
+            let config = {};
+
+            if (headers && headers['Content-Type'] === 'multipart/form-data') {
+                // FormData 객체 생성 및 데이터 추가
+                data = new FormData();
+                for (const key in newUser) {
+                    data.append(key, (newUser as never)[key]);
                 }
-            });
+                console.log("if" + data)
+                config = {
+                    headers: headers
+                };
+            } else {
+                // JSON 형식으로 데이터 전송
+                console.log("else" + data)
+                data = newUser;
+
+                config = {
+                    headers: headers || {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                };
+            }
+
+            return axios.post(endpoint, data, config);
         },
         onSuccess: (response: AxiosResponse) => {
             console.log(`${submitButtonText} 요청 성공:, ${response}`);
@@ -97,8 +121,8 @@ export default function UserForm(
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(`${submitButtonText} 요청 전: ${JSON.stringify(userInput)}`);
-        validateUserInput(userInput);
-        mutation.mutate(userInput);
+        validateUserInput(userInput as never);
+        mutation.mutate(userInput as never);
         console.log(`${submitButtonText} 요청 중: ${JSON.stringify(userInput)}`);
     };
 
@@ -115,7 +139,7 @@ export default function UserForm(
                         name={field}
                         placeholder={placeholderMap[field]}
                         onChange={handleChange}
-                        value={userInput[field] || ""}
+                        value={(userInput as never)[field] || ""}
                     />
                 </div>
             )))}

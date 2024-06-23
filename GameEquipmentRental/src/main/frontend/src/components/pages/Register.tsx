@@ -20,7 +20,11 @@ export default function Register() {
         phone: ""
     }
 
-    // Todo: 컴포넌트 분리 필요
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+
     return (
         <FormContainer>
             <UserForm
@@ -30,6 +34,7 @@ export default function Register() {
                 onFailureMessage="회원가입에 실패했습니다."
                 fields={["id", "password", "passwordConfirm", "name", "phone"]}
                 submitButtonText="회원가입"
+                headers={headers}
             />
             <Link to="/admin">어드민</Link>
             <Link to="/">로그인</Link>
