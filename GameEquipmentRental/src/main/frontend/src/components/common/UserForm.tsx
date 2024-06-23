@@ -13,18 +13,19 @@ import {validateUserInput} from '../../service';
 // Type
 import {UserInput} from "../../types";
 
-interface FormProps<T> {
-    initialValues: T;
+interface FormProps {
+    initialValues: UserInput;
     endpoint: string;
     onSuccessMessage: string;
     onFailureMessage: string;
-    fields: Array<keyof T>;
+    fields: Array<keyof UserInput>;
     submitButtonText?: string;
     headers: { [key: string]: string };
 }
 
 const iconMap: { [key in keyof UserInput]: JSX.Element } = {
     id: <FaRegUser />,
+    username: <FaRegUser />,
     password: <MdOutlineLock />,
     passwordConfirm: <MdOutlineLock />,
     name: <MdOutlineDriveFileRenameOutline />,
@@ -33,14 +34,14 @@ const iconMap: { [key in keyof UserInput]: JSX.Element } = {
 
 const placeholderMap: { [key in keyof UserInput]: string } = {
     id: "아이디를 입력해 주세요",
+    username: "아이디를 입력해 주세요",
     password: "비밀번호를 입력하세요",
     passwordConfirm: "비밀번호를 다시 입력해 주세요",
     name: "이름을 입력해 주세요",
     phone: "전화번호를 입력해 주세요"
 };
 
-// Todo: 로그인로직 타입에러 복구
-export default function UserForm<T>(
+export default function UserForm(
     {
         initialValues,
         endpoint,
@@ -49,10 +50,10 @@ export default function UserForm<T>(
         fields,
         submitButtonText,
         headers
-    }: FormProps<T>
+    }: FormProps
 ) {
     // 입력값 상태
-    const [userInput, setUserInput] = useState<T>(initialValues);
+    const [userInput, setUserInput] = useState<UserInput>(initialValues);
 
     // input 값 변경 시 상태 변경
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -121,8 +122,8 @@ export default function UserForm<T>(
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(`${submitButtonText} 요청 전: ${JSON.stringify(userInput)}`);
-        validateUserInput(userInput as never);
-        mutation.mutate(userInput as never);
+        validateUserInput(userInput);
+        mutation.mutate(userInput);
         console.log(`${submitButtonText} 요청 중: ${JSON.stringify(userInput)}`);
     };
 
@@ -139,7 +140,7 @@ export default function UserForm<T>(
                         name={field}
                         placeholder={placeholderMap[field]}
                         onChange={handleChange}
-                        value={(userInput as never)[field] || ""}
+                        value={userInput[field] || ""}
                     />
                 </div>
             )))}
