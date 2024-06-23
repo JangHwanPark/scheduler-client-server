@@ -7,7 +7,7 @@ interface TableProps<T> {
 
 export const Table = <T,>({ headers, data }: TableProps<T>) => {
     return (
-        <table>
+        <table className="custom-table">
             <thead>
             <tr>
                 {headers.map((header, index) => (

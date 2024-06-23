@@ -43,7 +43,11 @@ export default function Admin() {
                     </div>
                     <AdminChart/>
                 </section>
-                <GeneralSection title="매출 상세 내역" headers={salesHeaders} data={salesData}/>
+                <GeneralSection
+                    title="매출 상세 내역"
+                    headers={salesHeaders}
+                    data={salesData}
+                />
                 <GeneralSection
                     title="기기 관리"
                     headers={deviceHeaders}
