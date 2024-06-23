@@ -1,7 +1,10 @@
 package com.game.rental.users;
 
 import com.game.rental.users.dto.JoinDto;
+import com.game.rental.users.dto.LoginDto;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,20 +13,42 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
+    // 로그를 찍기 위한 Logger 객체 생성
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+
+    // Test
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        logger.info("Received login request: {}", loginDto);
+        System.out.println("아이디" + loginDto.getId());
+        System.out.println("비밀번호" + loginDto.getPassword());
+        return null;
+    }
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinDto user) {
-        if(userService.joinUser(user)) {
-            return ResponseEntity.ok().build();
+        //logger.info("Received join request: {}", user);
+        System.out.println("아이디" + user.getId());
+        System.out.println("비밀번호" + user.getPassword());
+        System.out.println("이름" + user.getName());
+        System.out.println("폰" + user.getPhone());
+
+        if (userService.joinUser(user)) {
+            //logger.info("Successfully registered user: {}", user);
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "User registered successfully"));
         }
-        return ResponseEntity.badRequest().build();
+
+        //logger.warn("Failed to register user: {}", user);
+        return ResponseEntity.badRequest().body(Collections.singletonMap("message", "User registration failed"));
+
     }
 
     @GetMapping("/info")

@@ -24,15 +24,15 @@ export const validateUserInput = (userInput: UserInput): boolean => {
         return false;
     }
 
-    if (!validateEmail(userInput.id)) {
+    /*if (!validateEmail(userInput.id)) {
         alert("이메일 형식이 올바르지 않습니다.");
         return false;
-    }
+    }*/
 
-    if (!validatePassword(userInput.password)) {
+    /*if (!validatePassword(userInput.password)) {
         alert("비밀번호는 8자 이상이어야 합니다.");
         return false;
-    }
+    }*/
 
     if (userInput.password !== userInput.passwordConfirm) {
         alert("비밀번호가 일치하지 않습니다.");
@@ -44,7 +44,7 @@ export const validateUserInput = (userInput: UserInput): boolean => {
         return false;
     }
 
-    if (!validateTrim(userInput.phoneNumber ?? "")) {
+    if (!validateTrim(userInput.phone ?? "")) {
         alert("전화번호를 입력해 주세요.");
         return false;
     }

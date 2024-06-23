@@ -3,9 +3,16 @@
 @use "variables";
 @use "mixins";
 
+// Pages
+@use "../components/pages/Auth";
+@use "../components/pages/Admin";
+@use "../components/pages/SalesSummary";
+@use "../components/pages/GeneralSection";
+
 // Components
 @use "../components/common/UserForm";
 
 // Layout
 @use "../components/layout/MainWrapper";
 @use "../components/layout/AdminAside";
+@use "../components/layout/GridContainer";

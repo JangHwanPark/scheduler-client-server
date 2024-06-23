@@ -1,6 +1,11 @@
 import {ChangeEvent, FormEvent, useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
+
+// Icon
+import {MdOutlineDriveFileRenameOutline, MdOutlineLock} from "react-icons/md";
+import {FaRegUser} from "react-icons/fa";
+import {FaPhoneFlip} from "react-icons/fa6";
 
 // Service
 import {validateUserInput} from '../../service';
@@ -14,7 +19,24 @@ interface FormProps {
     onSuccessMessage: string;
     onFailureMessage: string;
     fields: Array<keyof UserInput>;
+    submitButtonText?: string;
 }
+
+const iconMap: { [key in keyof UserInput]: JSX.Element } = {
+    id: <FaRegUser />,
+    password: <MdOutlineLock />,
+    passwordConfirm: <MdOutlineLock />,
+    name: <MdOutlineDriveFileRenameOutline />,
+    phone: <FaPhoneFlip />
+}
+
+const placeholderMap: { [key in keyof UserInput]: string } = {
+    id: "아이디를 입력해 주세요",
+    password: "비밀번호를 입력하세요",
+    passwordConfirm: "비밀번호를 다시 입력해 주세요",
+    name: "이름을 입력해 주세요",
+    phone: "전화번호를 입력해 주세요"
+};
 
 export default function UserForm(
     {
@@ -23,6 +45,7 @@ export default function UserForm(
         onSuccessMessage,
         onFailureMessage,
         fields,
+        submitButtonText
     }: FormProps
 ) {
     // 입력값 상태
@@ -40,80 +63,65 @@ export default function UserForm(
     // 회원가입 요청
     const mutation = useMutation({
         mutationFn: (newUser: UserInput) => {
-            return axios.post(endpoint, newUser)
+            console.log("요청 데이터:", newUser); // 요청 데이터 확인 로그
+            return axios.post(endpoint, newUser, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
         },
         onSuccess: (response: AxiosResponse) => {
-            console.log(response);
+            console.log(`${submitButtonText} 요청 성공:, ${response}`);
             alert(onSuccessMessage);
+
+            // 요청 성공 시 리다이렉트
+            // window.location.href = "/admin";
         },
-        onError: (error: any) => {
-            console.log(error);
+        onError: (error: AxiosError) => {
+            console.error(`${submitButtonText} 요청 실패:, ${error}`);
+            if (error.response) {
+                console.error("응답 데이터:", error.response.data);
+                console.error("응답 상태 코드:", error.response.status);
+                console.error("응답 헤더:", error.response.headers);
+            } else if (error.request) {
+                console.error("요청이 전송되었으나 응답을 받지 못함:", error.request);
+            } else {
+                console.error("요청 설정 중 에러 발생:", error.message);
+            }
             alert(onFailureMessage);
         }
     });
 
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(`${submitButtonText} 요청 전: ${JSON.stringify(userInput)}`);
         validateUserInput(userInput);
-
-        // 유효성 검사 통과시 회원가입 요청을 보냄
-        mutation.mutate({
-            id: userInput.id,
-            password: userInput.password,
-            passwordConfirm: userInput.passwordConfirm ?? '',
-            name: userInput.name ?? '',
-            phoneNumber: userInput.phoneNumber ?? ''
-        });
-    }
+        mutation.mutate(userInput);
+        console.log(`${submitButtonText} 요청 중: ${JSON.stringify(userInput)}`);
+    };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {fields.includes("id") && (
-                <input
-                    type="text"
-                    name="id"
-                    placeholder="아이디를 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.id}
-                />
-            )}
-            {fields.includes("password") && (
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="비밀번호를 입력하세요"
-                    onChange={handleChange}
-                    value={userInput.password}
-                />
-            )}
-            {fields.includes("passwordConfirm") && (
-                <input
-                    type="password"
-                    name="passwordConfirm"
-                    placeholder="비밀번호를 다시 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.passwordConfirm}
-                />
-            )}
-            {fields.includes("name") && (
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="이름을 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.name}
-                />
-            )}
-            {fields.includes("phoneNumber") && (
-                <input
-                    type="text"
-                    name="phoneNumber"
-                    placeholder="전화번호를 입력해 주세요"
-                    onChange={handleChange}
-                    value={userInput.phoneNumber}
-                />
-            )}
-            <button type="submit">제출</button>
+        <form onSubmit={handleSubmit} className="form login">
+            {fields.map((field => (
+                <div className="input-field" key={field}>
+                    <label htmlFor={`login-${field}`}>
+                        {iconMap[field]}
+                    </label>
+                    <input
+                        id={`login-${field}`}
+                        type={field.includes("password") ? "password" : "text"}
+                        name={field}
+                        placeholder={placeholderMap[field]}
+                        onChange={handleChange}
+                        value={userInput[field] || ""}
+                    />
+                </div>
+            )))}
+            <button type="submit">
+                {submitButtonText}
+            </button>
         </form>
     );
 }

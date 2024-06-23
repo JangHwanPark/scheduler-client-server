@@ -1,11 +1,13 @@
 import UserForm from "../common/UserForm.tsx";
+import {Link} from "react-router-dom";
+import FormContainer from "../layout/FormContainer.tsx";
 
 interface UserInput {
     id: string;
     password: string;
     passwordConfirm: string;
     name: string;
-    phoneNumber: string;
+    phone: string;
 }
 
 export default function Register() {
@@ -15,18 +17,22 @@ export default function Register() {
         password: "",
         passwordConfirm: "",
         name: "",
-        phoneNumber: ""
+        phone: ""
     }
 
+    // Todo: 컴포넌트 분리 필요
     return (
-        <div>
+        <FormContainer>
             <UserForm
                 initialValues={initialValues}
                 endpoint="http://localhost:8081/user/join"
                 onSuccessMessage="회원가입이 완료되었습니다."
                 onFailureMessage="회원가입에 실패했습니다."
-                fields={["id", "password", "passwordConfirm", "name", "phoneNumber"]}
+                fields={["id", "password", "passwordConfirm", "name", "phone"]}
+                submitButtonText="회원가입"
             />
-        </div>
+            <Link to="/admin">어드민</Link>
+            <Link to="/">로그인</Link>
+        </FormContainer>
     );
 }
