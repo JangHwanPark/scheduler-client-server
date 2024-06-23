@@ -22,7 +22,7 @@ public class UserService {
                 .loginPassword(passwordEncoder.encode(user.getPassword()))
                 .userName(user.getName())
                 .userPhoneNumber(user.getPhone())
-                .roles("user")
+                .roles("ROLE_USER")
                 .build();
         userRepo.save(userEntity);
         return true;
