@@ -1,6 +1,7 @@
 package com.game.rental.security.config;
 
 
+import com.game.rental.security.jwt.filter.JWTFIlter;
 import com.game.rental.security.jwt.filter.LoginFilter;
 import com.game.rental.security.jwt.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,12 @@ public class SecurityConfig {
                          * 다음 코드는 URL 호출에 대해 권한을 지정하는 코드 입니다.
                          * */
                         .requestMatchers("/user/**", "/page/**").permitAll()
-                        .requestMatchers("/api1").hasRole("user")
-                        .requestMatchers("/admin/**", "/api2").hasRole("admin")
+                        .requestMatchers("/api1").hasRole("USER")
+                        .requestMatchers("/admin/**", "/api2").hasRole("ADMIN")
                         .anyRequest().authenticated());
-
+        // jwt 필터 등록
+        http
+                .addFilterAt(new JWTFIlter(jwtUtil), LoginFilter.class);
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
