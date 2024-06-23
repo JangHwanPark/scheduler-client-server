@@ -21,10 +21,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
-        return User.builder()
-                .username(user.getLoginId())
-                .password(user.getLoginPassword())
-                .roles(user.getRoles())
-                .build();
+//        return User.builder()
+//                .username(user.getLoginId())
+//                .password(user.getLoginPassword())
+//                .roles(user.getRoles())
+//                .build();
+        return new CustomUserDetails(user);
     }
 }
