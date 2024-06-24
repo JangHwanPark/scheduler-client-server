@@ -80,7 +80,7 @@ public class LogoutFilter extends GenericFilterBean {
         }
 
         //DB에 저장되어 있는지 확인
-        Boolean isExist = refreshEntityRepository.existsByRefresh(refresh);
+        Boolean isExist = refreshEntityRepository.existsByRefreshToken(refresh);
         if (!isExist) {
 
             //response status code
@@ -90,7 +90,7 @@ public class LogoutFilter extends GenericFilterBean {
 
         //로그아웃 진행
         //Refresh 토큰 DB에서 제거
-        refreshEntityRepository.deleteByRefresh(refresh);
+        refreshEntityRepository.deleteByRefreshToken(refresh);
 
         //Refresh 토큰 Cookie 값 0
         Cookie cookie = new Cookie("refresh", null);

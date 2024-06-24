@@ -62,7 +62,7 @@ public class ReissueController {
         }
 
         //DB에 저장되어 있는지 확인
-        Boolean isExist = refreshEntityRepository.existsByRefresh(refresh);
+        Boolean isExist = refreshEntityRepository.existsByRefreshToken(refresh);
         if (!isExist) {
 
             //response body
@@ -77,7 +77,7 @@ public class ReissueController {
         String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
         // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
-        refreshEntityRepository.deleteByRefresh(refresh);
+        refreshEntityRepository.deleteByRefreshToken(refresh);
         UserEntity user = userEntityRepository.findByLoginId(username);
         addRefreshEntity(user,refresh,86400000L);
         //response
