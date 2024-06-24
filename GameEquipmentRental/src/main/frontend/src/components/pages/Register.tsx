@@ -1,4 +1,4 @@
-import UserForm from "../common/UserForm.tsx";
+import AuthForm from "../common/AuthForm.tsx";
 import {Link} from "react-router-dom";
 import FormContainer from "../layout/FormContainer.tsx";
 
@@ -27,7 +27,7 @@ export default function Register() {
 
     return (
         <FormContainer>
-            <UserForm
+            <AuthForm
                 initialValues={initialValues}
                 endpoint="http://localhost:8081/user/join"
                 onSuccessMessage="회원가입이 완료되었습니다."

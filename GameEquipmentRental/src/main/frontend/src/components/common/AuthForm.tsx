@@ -1,26 +1,20 @@
 import {FormEvent, useState} from "react";
-
-// Icon
 import {MdOutlineDriveFileRenameOutline, MdOutlineLock} from "react-icons/md";
 import {FaRegUser} from "react-icons/fa";
 import {FaPhoneFlip} from "react-icons/fa6";
-
-// Service
-//import {validateUserInput} from '../../service';
-
-// Type
-import {UserInput, FormProps} from "../../types";
+import {validateUserInput} from '../../service';
+import {FormProps, UserInput} from "../../types";
 import {useAuth} from "../../context/AuthContext.tsx";
 import axios from "axios";
 
 const iconMap: { [key in keyof UserInput]: JSX.Element } = {
-    id: <FaRegUser />,
-    username: <FaRegUser />,
-    password: <MdOutlineLock />,
-    passwordConfirm: <MdOutlineLock />,
-    name: <MdOutlineDriveFileRenameOutline />,
-    phone: <FaPhoneFlip />
-} as { [key: string]: JSX.Element };
+    id: <FaRegUser/>,
+    username: <FaRegUser/>,
+    password: <MdOutlineLock/>,
+    passwordConfirm: <MdOutlineLock/>,
+    name: <MdOutlineDriveFileRenameOutline/>,
+    phone: <FaPhoneFlip/>
+};
 
 const placeholderMap: { [key in keyof UserInput]: string } = {
     id: "아이디를 입력해 주세요",
@@ -29,9 +23,9 @@ const placeholderMap: { [key in keyof UserInput]: string } = {
     passwordConfirm: "비밀번호를 다시 입력해 주세요",
     name: "이름을 입력해 주세요",
     phone: "전화번호를 입력해 주세요"
-} as { [key: string]: string };
+};
 
-export default function UserForm(
+export default function AuthForm(
     {
         endpoint,
         fields,
@@ -39,14 +33,14 @@ export default function UserForm(
         headers,
         onSuccessMessage,
         onFailureMessage
-    }: FormProps
-) {
-    const { login } = useAuth();
+    }: FormProps) {
+    const {login} = useAuth();
     const [values, setValues] = useState<UserInput>({});
     const [message, setMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setValues({
             ...values,
             [name]: value,
@@ -55,17 +49,37 @@ export default function UserForm(
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        try {
-            const response = await axios.post(endpoint, values, { headers });
 
+        console.log("요청전 입력값:", values);
+        const validationErrors = validateUserInput(values);
+        if (Object.keys(validationErrors).length > 0) {
+            setMessage(null);
+            return;
+        }
+
+        setLoading(true);
+        console.log("요청중 입력값:", values);
+
+        try {
+            const response = await axios.post(endpoint, values, {headers});
             if (response.status === 200) {
                 setMessage(onSuccessMessage);
+                if (endpoint.includes("login")) {
+                    const loginValues = { username: values.username || "", password: values.password || "" };
+                    await login(loginValues);
+                }
+                console.log("요청후 입력값:", values);
+                console.log("응답메세지:", onSuccessMessage);
             } else {
                 setMessage(onFailureMessage);
+                console.log("응답메세지:", onFailureMessage);
             }
         } catch (error) {
             console.error('Request failed', error);
             setMessage(onFailureMessage);
+            console.log("응답메세지:", onFailureMessage);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -87,9 +101,10 @@ export default function UserForm(
                     />
                 </div>
             )))}
-            <button type="submit">
+            <button type="submit" disabled={loading}>
                 {submitButtonText}
             </button>
+            {message && <p>{message}</p>}
         </form>
     );
 }
