@@ -1,8 +1,10 @@
 package com.game.rental.security.jwt.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.game.rental.security.jwt.util.JWTUtil;
-import com.game.rental.security.logindetail.CustomUserDetails;
+import com.game.rental.users.dto.LoginDTO;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -27,9 +32,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
+        LoginDTO loginDTO;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ServletInputStream inputStream = request.getInputStream();
+            String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+            loginDTO = objectMapper.readValue(messageBody, LoginDTO.class);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(loginDTO.getUsername());
+
+        String username = loginDTO.getUsername();
+        String password = loginDTO.getPassword();
+
         //클라이언트 요청에서 username, password 추출
-        String username = obtainUsername(request);
-        String password = obtainPassword(request);
+//        String username = obtainUsername(request);
+//        String password = obtainPassword(request);
 
         // 요청이 잘 왔는지 확인 하기 위한 코드
         System.out.println(username);
