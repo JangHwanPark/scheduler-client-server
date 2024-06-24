@@ -1,6 +1,7 @@
 package com.game.rental.users.entity;
 
 import com.game.rental.orders.entity.OrdersEntity;
+import com.game.rental.security.entity.RefreshEntity;
 import com.game.rental.users.dto.JoinDto;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -49,6 +50,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<OrdersEntity> ordersList = new ArrayList<>();
+
+    @OneToOne
+    private RefreshEntity refreshEntity;
 
     public UserEntity toEntity(JoinDto joinDto) {
         this.loginId = joinDto.getId();
