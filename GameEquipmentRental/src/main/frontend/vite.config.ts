@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  assetsInclude: ['**/*.bak'], // .bak 파일을 에셋으로 포함
   build: {
     outDir: 'dist'
   },

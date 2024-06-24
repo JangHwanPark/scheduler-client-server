@@ -1,5 +1,4 @@
-import {FormEvent, useEffect, useState} from "react";
-import {login} from "../../api/axiosInstance.ts";
+import {FormEvent, useState} from "react";
 
 // Icon
 import {MdOutlineDriveFileRenameOutline, MdOutlineLock} from "react-icons/md";
@@ -11,7 +10,8 @@ import {FaPhoneFlip} from "react-icons/fa6";
 
 // Type
 import {UserInput, FormProps} from "../../types";
-//import {useAuth} from "../../context/AuthContext.tsx";
+import {useAuth} from "../../context/AuthContext.tsx";
+import axios from "axios";
 
 const iconMap: { [key in keyof UserInput]: JSX.Element } = {
     id: <FaRegUser />,
@@ -33,56 +33,41 @@ const placeholderMap: { [key in keyof UserInput]: string } = {
 
 export default function UserForm(
     {
-        //endpoint,
+        endpoint,
         fields,
         submitButtonText,
-        //headers
+        headers,
+        onSuccessMessage,
+        onFailureMessage
     }: FormProps
 ) {
-    /*const { userInput, handleChange, handleSubmit } = useAuth();
+    const { login } = useAuth();
+    const [values, setValues] = useState<UserInput>({});
+    const [message, setMessage] = useState<string | null>(null);
 
-    const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) =>
-    {
-        e.preventDefault();
-
-        // 입력 검증
-        validateUserInput(userInput);
-
-        // 요청 처리
-        await handleSubmit(endpoint, 'post', headers, true);
-    };*/
-    const [values, setValues] = useState({
-        username: "",
-        password: "",
-    });
-
-    const handleChange = async (e) => {
-        const field = e.target.id.replace("login-", "");
-        console.log(e.target.value)
-        console.log('values' + JSON.stringify(values))
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
         setValues({
             ...values,
-            [field]: e.target.value
+            [name]: value,
         });
-    }
+    };
 
-    useEffect(() => {
-        console.log('Current values:', values);
-    }, [values]);
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        login(values)
-            .then((response) => {
-                localStorage.clear();
-                localStorage.setItem('tokenType', response.tokenType);
-                localStorage.setItem('accessToken', response.accessToken);
-                localStorage.setItem('refreshToken', response.refreshToken);
-                //window.location.href = `/admin`;
-            }).catch((error) => {
-            console.log(error);
-        });
-    }
+        try {
+            const response = await axios.post(endpoint, values, { headers });
+
+            if (response.status === 200) {
+                setMessage(onSuccessMessage);
+            } else {
+                setMessage(onFailureMessage);
+            }
+        } catch (error) {
+            console.error('Request failed', error);
+            setMessage(onFailureMessage);
+        }
+    };
 
     return (
         <form onSubmit={handleSubmit} className="form login">
@@ -98,6 +83,7 @@ export default function UserForm(
                         placeholder={placeholderMap[field]}
                         onChange={handleChange}
                         value={values[field] || ""}
+                        autoComplete={field.includes("password") ? "new-password" : "off"}
                     />
                 </div>
             )))}
