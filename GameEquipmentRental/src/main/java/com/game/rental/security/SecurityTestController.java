@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 @RestController
 public class SecurityTestController {
@@ -23,7 +25,10 @@ public class SecurityTestController {
         Iterator<? extends GrantedAuthority> iter = authorities.iterator();
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
-        return ResponseEntity.ok("api1 name : "+name+" role : "+role);
+        Map<String, String > map = new HashMap<>();
+        map.put("id",name);
+        map.put("role",role);
+        return ResponseEntity.ok(map);
     }
 
     @GetMapping("/api2")
