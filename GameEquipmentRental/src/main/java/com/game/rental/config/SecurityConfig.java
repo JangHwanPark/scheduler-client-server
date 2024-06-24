@@ -69,9 +69,6 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // 로그아웃 필터 등록
-        http
-                .addFilterBefore(new LogoutFilter(jwtUtil, refreshEntityRepository), LogoutFilter.class);
         // cors 세팅
         http
                 .cors((cors) ->
@@ -98,6 +95,9 @@ public class SecurityConfig {
                             }
                         })
                 );
+        // 로그아웃 필터 등록
+        http
+                .addFilterBefore(new LogoutFilter(jwtUtil, refreshEntityRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
