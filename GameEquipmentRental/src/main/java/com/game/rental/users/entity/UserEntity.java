@@ -51,7 +51,7 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<OrdersEntity> ordersList = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "userEntity")
     private RefreshEntity refreshEntity;
 
     public UserEntity toEntity(JoinDto joinDto) {

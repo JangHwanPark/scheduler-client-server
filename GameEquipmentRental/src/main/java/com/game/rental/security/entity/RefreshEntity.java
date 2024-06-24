@@ -24,7 +24,7 @@ public class RefreshEntity {
     @Column(name = "expiration")
     private String expiration;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 }
