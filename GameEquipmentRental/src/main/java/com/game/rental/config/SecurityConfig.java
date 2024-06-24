@@ -4,6 +4,7 @@ package com.game.rental.config;
 import com.game.rental.security.entity.RefreshEntityRepository;
 import com.game.rental.security.jwt.filter.JWTFIlter;
 import com.game.rental.security.jwt.filter.LoginFilter;
+import com.game.rental.security.jwt.filter.LogoutFilter;
 import com.game.rental.security.jwt.util.JWTUtil;
 import com.game.rental.users.entity.UserEntityRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +69,9 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // 로그아웃 필터 등록
+        http
+                .addFilterBefore(new LogoutFilter(jwtUtil, refreshEntityRepository), LogoutFilter.class);
         // cors 세팅
         http
                 .cors((cors) ->
