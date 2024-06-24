@@ -16,10 +16,10 @@ export default function Login() {
     };
 
     const headers = {
-        'Content-Type': 'multipart/form-data'
+        //'Content-Type': 'multipart/form-data'
+        'Content-Type': 'application/json',
     }
-
-    const { login } = useAuth();
+    const { login, accessToken, refreshToken } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -48,6 +48,8 @@ export default function Login() {
             <Link to="/register">회원가입</Link>
             <Link to="/admin">어드민</Link>
             <div>Form Test</div>
+            {accessToken ? <p>Access Token: {accessToken}</p> : <p>Access Token: 로그인 ㄱㄱ</p>}
+            {refreshToken ? <p>Refresh Token: {refreshToken}</p> : <p>Refresh Token: 로그인 ㄱㄱ</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>

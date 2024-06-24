@@ -38,6 +38,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             ObjectMapper objectMapper = new ObjectMapper();
             ServletInputStream inputStream = request.getInputStream();
             String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+            // 디버깅 로그 추가
+            System.out.println("Request Body: " + messageBody);
             loginDTO = objectMapper.readValue(messageBody, LoginDTO.class);
 
         } catch (IOException e) {
@@ -54,8 +57,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        String password = obtainPassword(request);
 
         // 요청이 잘 왔는지 확인 하기 위한 코드
-        System.out.println(username);
-        System.out.println(password);
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
 
         //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
@@ -84,19 +87,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        response.addHeader("Authorization", "Bearer " + token);
         //유저 정보
         String username = authentication.getName();
+        System.out.println("username: " + username);
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        //토큰 생성
+        // 토큰 생성
         String access = jwtUtil.createJwt("access", username, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
+        System.out.println("Access Token: " + access);
+        System.out.println("Refresh Token: " + refresh);
+
         //응답 설정
         response.setHeader("access", access);
+        response.setHeader("refresh", refresh);
         response.addCookie(createCookie("refresh", refresh));
+
+
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -111,7 +121,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge(24 * 60 * 60);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
