@@ -24,9 +24,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // accessToken, refreshToken 이 변경될 때 마다 로컬 스토리지에 저장
     useEffect(() => {
-        accessToken
-            ? localStorage.setItem("accessToken", accessToken)
-            : localStorage.removeItem("accessToken");
+        if (accessToken) {
+            localStorage.setItem("accessToken", accessToken);
+            axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        } else {
+            localStorage.removeItem("accessToken");
+            delete axios.defaults.headers.common["Authorization"];
+        }
 
         refreshToken
             ? localStorage.setItem("refreshToken", refreshToken)
