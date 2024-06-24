@@ -1,6 +1,5 @@
-import {ChangeEvent, FormEvent, useState} from "react";
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {useMutation} from "@tanstack/react-query";
+import {FormEvent, useEffect, useState} from "react";
+import {login} from "../../api/axiosInstance.ts";
 
 // Icon
 import {MdOutlineDriveFileRenameOutline, MdOutlineLock} from "react-icons/md";
@@ -8,20 +7,11 @@ import {FaRegUser} from "react-icons/fa";
 import {FaPhoneFlip} from "react-icons/fa6";
 
 // Service
-import {validateUserInput} from '../../service';
+//import {validateUserInput} from '../../service';
 
 // Type
-import {UserInput} from "../../types";
-
-interface FormProps {
-    initialValues: UserInput;
-    endpoint: string;
-    onSuccessMessage: string;
-    onFailureMessage: string;
-    fields: Array<keyof UserInput>;
-    submitButtonText?: string;
-    headers: { [key: string]: string };
-}
+import {UserInput, FormProps} from "../../types";
+//import {useAuth} from "../../context/AuthContext.tsx";
 
 const iconMap: { [key in keyof UserInput]: JSX.Element } = {
     id: <FaRegUser />,
@@ -30,7 +20,7 @@ const iconMap: { [key in keyof UserInput]: JSX.Element } = {
     passwordConfirm: <MdOutlineLock />,
     name: <MdOutlineDriveFileRenameOutline />,
     phone: <FaPhoneFlip />
-}
+} as { [key: string]: JSX.Element };
 
 const placeholderMap: { [key in keyof UserInput]: string } = {
     id: "아이디를 입력해 주세요",
@@ -39,93 +29,60 @@ const placeholderMap: { [key in keyof UserInput]: string } = {
     passwordConfirm: "비밀번호를 다시 입력해 주세요",
     name: "이름을 입력해 주세요",
     phone: "전화번호를 입력해 주세요"
-};
+} as { [key: string]: string };
 
 export default function UserForm(
     {
-        initialValues,
-        endpoint,
-        onSuccessMessage,
-        onFailureMessage,
+        //endpoint,
         fields,
         submitButtonText,
-        headers
+        //headers
     }: FormProps
 ) {
-    // 입력값 상태
-    const [userInput, setUserInput] = useState<UserInput>(initialValues);
+    /*const { userInput, handleChange, handleSubmit } = useAuth();
 
-    // input 값 변경 시 상태 변경
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setUserInput({
-            ...userInput,
-            [name]: value
+    const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) =>
+    {
+        e.preventDefault();
+
+        // 입력 검증
+        validateUserInput(userInput);
+
+        // 요청 처리
+        await handleSubmit(endpoint, 'post', headers, true);
+    };*/
+    const [values, setValues] = useState({
+        username: "",
+        password: "",
+    });
+
+    const handleChange = async (e) => {
+        const field = e.target.id.replace("login-", "");
+        console.log(e.target.value)
+        console.log('values' + JSON.stringify(values))
+        setValues({
+            ...values,
+            [field]: e.target.value
         });
     }
 
-    // 회원가입 요청
-    const mutation = useMutation({
-        mutationFn: (newUser: UserInput) => {
-            console.log("요청 데이터:", newUser); // 요청 데이터 확인 로그
-            let data;
-            let config = {};
+    useEffect(() => {
+        console.log('Current values:', values);
+    }, [values]);
 
-            if (headers && headers['Content-Type'] === 'multipart/form-data') {
-                // FormData 객체 생성 및 데이터 추가
-                data = new FormData();
-                for (const key in newUser) {
-                    data.append(key, (newUser as never)[key]);
-                }
-                console.log("if" + data)
-                config = {
-                    headers: headers
-                };
-            } else {
-                // JSON 형식으로 데이터 전송
-                console.log("else" + data)
-                data = newUser;
-
-                config = {
-                    headers: headers || {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                };
-            }
-
-            return axios.post(endpoint, data, config);
-        },
-        onSuccess: (response: AxiosResponse) => {
-            console.log(`${submitButtonText} 요청 성공:, ${response}`);
-            alert(onSuccessMessage);
-
-            // 요청 성공 시 리다이렉트
-            // window.location.href = "/admin";
-        },
-        onError: (error: AxiosError) => {
-            console.error(`${submitButtonText} 요청 실패:, ${error}`);
-            if (error.response) {
-                console.error("응답 데이터:", error.response.data);
-                console.error("응답 상태 코드:", error.response.status);
-                console.error("응답 헤더:", error.response.headers);
-            } else if (error.request) {
-                console.error("요청이 전송되었으나 응답을 받지 못함:", error.request);
-            } else {
-                console.error("요청 설정 중 에러 발생:", error.message);
-            }
-            alert(onFailureMessage);
-        }
-    });
-
-
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(`${submitButtonText} 요청 전: ${JSON.stringify(userInput)}`);
-        validateUserInput(userInput);
-        mutation.mutate(userInput);
-        console.log(`${submitButtonText} 요청 중: ${JSON.stringify(userInput)}`);
-    };
+        login(values)
+            .then((response) => {
+                localStorage.clear();
+                localStorage.setItem('tokenType', response.tokenType);
+                localStorage.setItem('accessToken', response.accessToken);
+                localStorage.setItem('refreshToken', response.refreshToken);
+                //window.location.href = `/admin`;
+            }).catch((error) => {
+            console.log(error);
+        });
+    }
 
     return (
         <form onSubmit={handleSubmit} className="form login">
@@ -140,7 +97,7 @@ export default function UserForm(
                         name={field}
                         placeholder={placeholderMap[field]}
                         onChange={handleChange}
-                        value={userInput[field] || ""}
+                        value={values[field] || ""}
                     />
                 </div>
             )))}
