@@ -1,5 +1,6 @@
 export interface UserInput {
-    id: string;
+    id?: string;
+    username?: string;
     password: string;
     passwordConfirm?: string;
     name?: string;

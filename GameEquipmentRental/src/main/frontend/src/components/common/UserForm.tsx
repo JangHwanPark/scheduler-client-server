@@ -20,10 +20,12 @@ interface FormProps {
     onFailureMessage: string;
     fields: Array<keyof UserInput>;
     submitButtonText?: string;
+    headers: { [key: string]: string };
 }
 
 const iconMap: { [key in keyof UserInput]: JSX.Element } = {
     id: <FaRegUser />,
+    username: <FaRegUser />,
     password: <MdOutlineLock />,
     passwordConfirm: <MdOutlineLock />,
     name: <MdOutlineDriveFileRenameOutline />,
@@ -32,6 +34,7 @@ const iconMap: { [key in keyof UserInput]: JSX.Element } = {
 
 const placeholderMap: { [key in keyof UserInput]: string } = {
     id: "아이디를 입력해 주세요",
+    username: "아이디를 입력해 주세요",
     password: "비밀번호를 입력하세요",
     passwordConfirm: "비밀번호를 다시 입력해 주세요",
     name: "이름을 입력해 주세요",
@@ -45,7 +48,8 @@ export default function UserForm(
         onSuccessMessage,
         onFailureMessage,
         fields,
-        submitButtonText
+        submitButtonText,
+        headers
     }: FormProps
 ) {
     // 입력값 상태
@@ -64,12 +68,33 @@ export default function UserForm(
     const mutation = useMutation({
         mutationFn: (newUser: UserInput) => {
             console.log("요청 데이터:", newUser); // 요청 데이터 확인 로그
-            return axios.post(endpoint, newUser, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+            let data;
+            let config = {};
+
+            if (headers && headers['Content-Type'] === 'multipart/form-data') {
+                // FormData 객체 생성 및 데이터 추가
+                data = new FormData();
+                for (const key in newUser) {
+                    data.append(key, (newUser as never)[key]);
                 }
-            });
+                console.log("if" + data)
+                config = {
+                    headers: headers
+                };
+            } else {
+                // JSON 형식으로 데이터 전송
+                console.log("else" + data)
+                data = newUser;
+
+                config = {
+                    headers: headers || {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                };
+            }
+
+            return axios.post(endpoint, data, config);
         },
         onSuccess: (response: AxiosResponse) => {
             console.log(`${submitButtonText} 요청 성공:, ${response}`);

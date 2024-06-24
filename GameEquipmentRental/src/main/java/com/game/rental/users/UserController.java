@@ -1,6 +1,7 @@
 package com.game.rental.users;
 
 import com.game.rental.users.dto.JoinDto;
+import com.game.rental.users.entity.UserInput;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,16 @@ public class UserController {
     // 로그를 찍기 위한 Logger 객체 생성
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserInput userInput) {
+        // 아이디와 비밀번호를 사용하여 인증 처리
+        if ("1".equals(userInput.getId()) && "1".equals(userInput.getPassword())) {
+            return ResponseEntity.ok("로그인 성공");
+        } else {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+    }
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinDto user) {

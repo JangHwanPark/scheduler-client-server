@@ -9,7 +9,8 @@ export const validatePassword = (password: string): boolean => {
     return password.length >= 8;
 };
 
-export const validateTrim = (input: string): boolean => {
+export const validateTrim = (input: string | undefined): boolean => {
+    if (input === undefined) return false;
     return input.trim() !== "";
 }
 
