@@ -50,7 +50,7 @@ public class SecurityConfig {
                         /**
                          * 다음 코드는 URL 호출에 대해 권한을 지정하는 코드 입니다.
                          * */
-                        .requestMatchers("/user/**", "/page/**").permitAll()
+                        .requestMatchers("/user/**", "/page/**","/reissue").permitAll()
                         .requestMatchers("/api1").hasRole("USER")
                         .requestMatchers("/admin/**", "/api2").hasRole("ADMIN")
                         .anyRequest().authenticated());
