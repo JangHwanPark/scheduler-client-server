@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
 import axios from "axios";
 // import axiosInstance from "../api/axiosInstance.ts";
-// import {logout} from "../api/axiosInstance.ts";
+import {loginAPI} from "../api/axiosInstance.ts";
 
 // 컨텍스트 API 타입 정의
 interface AuthContextType {
@@ -37,36 +37,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 로그인 함수 : 서버에 로그인 요청을 보내고 성공시 토큰을 상태에 저장
     const login = async (credentials: { username: string; password: string }) => {
-        try {
-            const response = await axios.post(
-                "http://localhost:8081/login",
-                credentials, {
-                headers: { "Content-Type": "application/json" },
+        const response = await loginAPI(credentials);
 
-                // 요청에 쿠키 포함
-                withCredentials: true
-            });
+        if (response && response.status === 200) {
+            const accessToken = response.headers["access"];
+            const refreshToken = getCookie("refresh");
+            console.log("Access Token:", accessToken);
+            console.log("Refresh Token:", refreshToken);
 
-            if (response.status === 200) {
-                console.log("Res:", response);
-                console.log("Res headers:", response.headers);
-
-                const accessToken = response.headers["access"];
-                const refreshToken = getCookie("refresh");
-                const test = response.headers["Set-Cookie"];
-
-                console.log("Access Token:", accessToken);
-                console.log("Refresh Token:", refreshToken);
-
-                if (accessToken && refreshToken) {
-                    setAccessToken(accessToken);
-                    setRefreshToken(refreshToken);
-                }
-            } else {
-                console.error("Login failed with status: " + response.status);
+            if (accessToken && refreshToken) {
+                setAccessToken(accessToken);
+                setRefreshToken(refreshToken);
             }
-        } catch (error) {
-            console.error("Login error", error);
+        } else {
+            console.error("Login failed with status: " + response?.status);
         }
     };
 
@@ -74,7 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = async () => {
         try {
             // await logout();
-            const response = await axios.post(`http://localhost:8081/logout`);
+            const response = await axios.post(`http://localhost:8081/logout`, {},{
+                withCredentials: true});
             setAccessToken(null);
             setRefreshToken(null);
 

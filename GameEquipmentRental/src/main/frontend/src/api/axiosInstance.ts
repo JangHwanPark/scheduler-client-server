@@ -16,13 +16,20 @@ const axiosInstance = axios.create({
 });
 
 /** LOGIN API */
-export const login = async ({ username, password }: never) => {
-    const data = { username, password };
-    const response = await axiosInstance.post(`/login`, data);
-    console.log(response);
-    console.log(response.data);
-    return response.data;
-}
+export const loginAPI = async (credentials: { username: string; password: string }) => {
+    try {
+        const response = await axios.post(
+            "http://localhost:8081/login",
+            credentials, {
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true // 요청에 쿠키 포함
+            });
+
+        return response;
+    } catch (error) {
+        console.error("Login error", error);
+    }
+};
 
 export const logout = async () => {
 
