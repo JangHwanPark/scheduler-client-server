@@ -18,14 +18,14 @@ interface UserInfo {
 }
 
 export default function Login() {
-    const { login, logout } = useAuth();
+    const {login, logout} = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            await login({ username, password });
+            await login({username, password});
             alert("로그인 성공!");
         } catch (error) {
             console.error("로그인 실패", error);
@@ -51,8 +51,8 @@ export default function Login() {
 
     return (
         <FormContainer>
+            {userInfo?.role === "ADMIN" && (<Link to="/admin">어드민</Link>)}
             <Link to="/register">회원가입</Link>
-            <Link to="/admin">어드민</Link>
             <div>Form Test</div>
             <form onSubmit={handleSubmit}>
                 <div>
