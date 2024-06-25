@@ -4,7 +4,7 @@ const TOKEN_TYPE = 'Bearer';
 let ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 // Axios 인스턴스 생성
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: 'http://localhost:8081', // 기본 URL 설정
     headers: {
         'Content-Type': 'application/json', // 기본 헤더 설정
@@ -32,6 +32,7 @@ axiosInstance.interceptors.response.use(
     (response) => {
         return response; // 정상 응답 처리
     },
+
     async (error) => {
         const originalRequest = error.config;
         const errorCode = error.response.status;
@@ -44,7 +45,7 @@ axiosInstance.interceptors.response.use(
                 const refreshToken = localStorage.getItem("refreshToken");
 
                 // 리프레시 토큰을 사용하여 새로운 액세스 토큰 요청
-                const response = await axiosInstance.post('/reissue', { token: refreshToken }, {
+                const response = await axios.post('http://localhost:8081/reissue', { token: refreshToken }, {
                     headers: { "Content-Type": "application/json" },
                     withCredentials: true
                 });
@@ -58,45 +59,22 @@ axiosInstance.interceptors.response.use(
                     localStorage.setItem("refreshToken", newRefreshToken);
 
                     // Axios 인스턴스 및 원래 요청의 Authorization 헤더를 업데이트
-                    // axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-                    // originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
                     // 원래 요청을 재시도
                     return axiosInstance(originalRequest);
                 }
             } catch (err) {
                 console.error("Refresh token error", err);
+
+                // 리프레시 토큰이 유효하지 않은 경우 로그아웃 처리
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                return Promise.reject(error);
             }
         }
 
         return Promise.reject(error); // 응답 오류 처리
     }
 );
-
-/** LOGIN API */
-export const loginAPI = async (credentials: { username: string; password: string }) => {
-    try {
-        // 로그인 API 호출
-        return await axiosInstance.post("/login", credentials);
-    } catch (error) {
-        console.error("Login error", error);
-
-        // 오류 발생 시 undefined 반환
-        return undefined;
-    }
-};
-
-/** LOGOUT API */
-export const logoutAPI = async () => {
-    try {
-        // 로그아웃 API 호출
-        return await axiosInstance.post("/logout");
-    } catch (error) {
-        console.error("Logout error", error);
-
-        // 오류 발생 시 undefined 반환
-        return undefined;
-    }
-};
-
-export default axiosInstance;

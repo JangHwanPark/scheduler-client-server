@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
-import {loginAPI, logoutAPI} from "../api/axiosInstance.ts";
 import {jwtDecode} from "jwt-decode";
+import axios from "axios";
+import {loginAPI, logoutAPI} from "../api/userService.ts";
 
 // JWT 디코딩 타입 정의
 interface JwtPayload {
@@ -83,7 +84,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const getRemainingTime = (): number | null => {
         if (!accessToken) return null;
-        // @ts-ignore
         const decoded = jwtDecode<JwtPayload>(accessToken);
         const currentTime = Date.now() / 1000;
         const remainingTime = decoded.exp - currentTime;

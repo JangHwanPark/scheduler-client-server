@@ -4,11 +4,18 @@ import FormContainer from "../layout/FormContainer.tsx";
 import {useAuth} from "../../context/AuthContext.tsx";
 import {useState} from "react";
 import TokenTimer from "../common/TokenTimer.tsx";
+import {getUserInfo} from "../../api/userService.ts";
 
 /*interface UserInput {
     username: string;
     password: string;
 }*/
+
+// 사용자 정보 타입 정의
+interface UserInfo {
+    id: string;
+    role: string;
+}
 
 export default function Login() {
     /*const initialValues: UserInput = {
@@ -39,6 +46,17 @@ export default function Login() {
         await logout();
         console.log("로그아웃")
     }
+
+    /* 액세스 토큰 갱신을 위한 테스트 로직 */
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const fetchUserInfo = async () => {
+        const response = await getUserInfo();
+        if (response && response.status === 200) {
+            setUserInfo(response.data);
+        } else {
+            console.error("사용자 정보 가져오기 실패");
+        }
+    };
 
     return (
         <FormContainer>
@@ -76,10 +94,23 @@ export default function Login() {
                     </label>
                 </div>
                 <button type="submit">로그인</button>
-                <TokenTimer />
+                <TokenTimer/>
                 <div></div>
             </form>
             <button type="submit" onClick={handleLogout}>로그아웃</button>
+            <div>
+                <button onClick={fetchUserInfo}>사용자 정보 가져오기</button>
+                {userInfo ? (
+                    <div>
+                        <h3>사용자 정보:</h3>
+                        <p>이름: {userInfo.id}</p>
+                        <p>권한: {userInfo.role}</p>
+                        {/*<p>권한: {userInfo.role}</p>*/}
+                    </div>
+                ) : (
+                    <p>로그인 ㄱㄱ.</p>
+                )}
+            </div>
         </FormContainer>
     );
 }

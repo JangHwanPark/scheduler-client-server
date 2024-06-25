@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 public class SecurityTestController {
-    @GetMapping("/api1")
+    @GetMapping("/user-info")
     public ResponseEntity<?> api1() {
         // 접속한 사용자 이름 id 값
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
