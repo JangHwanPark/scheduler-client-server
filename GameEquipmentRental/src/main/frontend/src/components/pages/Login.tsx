@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import FormContainer from "../layout/FormContainer.tsx";
 import {useAuth} from "../../context/AuthContext.tsx";
 import {useState} from "react";
+import TokenTimer from "../common/TokenTimer.tsx";
 
 /*interface UserInput {
     username: string;
@@ -75,7 +76,8 @@ export default function Login() {
                     </label>
                 </div>
                 <button type="submit">로그인</button>
-                <button type="submit">쿠키 전송</button>
+                <TokenTimer />
+                <div></div>
             </form>
             <button type="submit" onClick={handleLogout}>로그아웃</button>
         </FormContainer>
