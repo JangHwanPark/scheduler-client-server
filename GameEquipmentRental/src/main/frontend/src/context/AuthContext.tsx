@@ -54,6 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // 쿠키에 리프레시 토큰 설정
             setCookie("refresh", refreshToken, { path: "/", secure: true, sameSite: "strict" });
             console.log("Refresh Token:", refreshToken);
+
+            localStorage.setItem("refreshToken", refreshToken); // 로컬 스토리지에 저장
         } else {
             console.error("Login failed with status: " + response?.status);
         }
