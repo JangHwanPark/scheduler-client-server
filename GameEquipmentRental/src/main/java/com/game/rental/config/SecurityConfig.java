@@ -1,9 +1,12 @@
 package com.game.rental.config;
 
 
+import com.game.rental.security.entity.RefreshEntityRepository;
 import com.game.rental.security.jwt.filter.JWTFIlter;
 import com.game.rental.security.jwt.filter.LoginFilter;
+import com.game.rental.security.jwt.filter.LogoutFilter;
 import com.game.rental.security.jwt.util.JWTUtil;
+import com.game.rental.users.entity.UserEntityRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +31,8 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshEntityRepository refreshEntityRepository;
+    private final UserEntityRepository userEntityRepository;
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -50,7 +55,7 @@ public class SecurityConfig {
                         /**
                          * 다음 코드는 URL 호출에 대해 권한을 지정하는 코드 입니다.
                          * */
-                        .requestMatchers("/user/**", "/page/**").permitAll()
+                        .requestMatchers("/user/**", "/page/**","/reissue").permitAll()
                         .requestMatchers("/api1").hasRole("USER")
                         .requestMatchers("/admin/**", "/api2").hasRole("ADMIN")
                         .anyRequest().authenticated());
@@ -59,7 +64,7 @@ public class SecurityConfig {
                 .addFilterAt(new JWTFIlter(jwtUtil), LoginFilter.class);
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, refreshEntityRepository, userEntityRepository), UsernamePasswordAuthenticationFilter.class);
         // jwt 를 이용하여 로그인 로직을 구현시 session 을 사용하지 않아 session을 stateless 상태로 설정
         http
                 .sessionManagement((session) -> session
@@ -90,6 +95,9 @@ public class SecurityConfig {
                             }
                         })
                 );
+        // 로그아웃 필터 등록
+        http
+                .addFilterBefore(new LogoutFilter(jwtUtil, refreshEntityRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
