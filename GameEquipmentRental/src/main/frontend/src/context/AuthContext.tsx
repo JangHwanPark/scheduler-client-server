@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
 import axios from "axios";
+// import axiosInstance from "../api/axiosInstance.ts";
+// import {logout} from "../api/axiosInstance.ts";
 
 // 컨텍스트 API 타입 정의
 interface AuthContextType {
@@ -48,8 +50,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (response.status === 200) {
                 console.log("Res:", response);
                 console.log("Res headers:", response.headers);
+
                 const accessToken = response.headers["access"];
                 const refreshToken = getCookie("refresh");
+                const test = response.headers["Set-Cookie"];
 
                 console.log("Access Token:", accessToken);
                 console.log("Refresh Token:", refreshToken);
@@ -66,10 +70,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    // 로그아웃 함수: 토큰을 상태에서 제거
-    const logout = () => {
-        setAccessToken(null);
-        setRefreshToken(null);
+    // 로그아웃 함수: 토큰을 상태에서 제거하고 서버에 로그아웃 요청을 보냄
+    const logout = async () => {
+        try {
+            // await logout();
+            const response = await axios.post(`http://localhost:8081/logout`);
+            setAccessToken(null);
+            setRefreshToken(null);
+
+            return response;
+        } catch (error) {
+            console.error("Logout error", error);
+        }
     };
 
     // 쿠키에서 값을 가져오는 함수
