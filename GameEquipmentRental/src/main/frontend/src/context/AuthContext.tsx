@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
-import {jwtDecode} from "jwt-decode";
+import { loginAPI, logoutAPI } from "../api/userService.ts";
 import axios from "axios";
-import {loginAPI, logoutAPI} from "../api/userService.ts";
+import {jwtDecode} from "jwt-decode";
+import { useCookies } from "react-cookie";
 
 // JWT 디코딩 타입 정의
 interface JwtPayload {
@@ -11,7 +12,6 @@ interface JwtPayload {
 // 컨텍스트 API 타입 정의
 interface AuthContextType {
     accessToken: string | null;
-    refreshToken: string | null;
     login: (credentials: { username: string; password: string }) => Promise<void>;
     logout: () => void;
     getRemainingTime?: () => number | null;
@@ -22,12 +22,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 프로바이더 생성
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [accessToken, setAccessToken] = useState<string | null>(
-        localStorage.getItem("accessToken")
-    );
-    const [refreshToken, setRefreshToken] = useState<string | null>(
-        localStorage.getItem("refreshToken")
-    );
+    const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
+    const [cookies, setCookie, removeCookie] = useCookies(["refresh"]);
 
     useEffect(() => {
         if (accessToken) {
@@ -38,21 +34,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             delete axios.defaults.headers.common["Authorization"];
         }
 
-        refreshToken
-            ? localStorage.setItem("refreshToken", refreshToken)
-            : localStorage.removeItem("refreshToken");
-    }, [accessToken, refreshToken]);
+        // 쿠키에서 refreshToken을 읽어서 상태에 저장
+        const refreshToken = cookies.refresh;
+        if (refreshToken) {
+            localStorage.setItem("refreshToken", refreshToken);
+        }
+    }, [accessToken, cookies.refresh]);
 
     const login = async (credentials: { username: string; password: string }) => {
         const response = await loginAPI(credentials);
 
         if (response && response.status === 200) {
             const accessToken = response.headers["access"];
-            const refreshToken = getCookie("refresh");
+            const refreshToken = cookies.refresh;
 
             setAccessToken(accessToken);
             console.log("Access Token:", accessToken);
-            setRefreshToken(refreshToken);
+
+            // 쿠키에 리프레시 토큰 설정
+            setCookie("refresh", refreshToken, { path: "/", secure: true, sameSite: "strict" });
             console.log("Refresh Token:", refreshToken);
         } else {
             console.error("Login failed with status: " + response?.status);
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const response = await logoutAPI();
             if (response && response.status === 200) {
                 setAccessToken(null);
-                setRefreshToken(null);
+                removeCookie("refresh");
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
             } else {
@@ -73,13 +73,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             console.error("Logout error", error);
         }
-    };
-
-    const getCookie = (name: string) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(";").shift() ?? null;
-        return null;
     };
 
     const getRemainingTime = (): number | null => {
@@ -91,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ accessToken, refreshToken, login, logout, getRemainingTime }}>
+        <AuthContext.Provider value={{ accessToken, login, logout, getRemainingTime }}>
             {children}
         </AuthContext.Provider>
     );

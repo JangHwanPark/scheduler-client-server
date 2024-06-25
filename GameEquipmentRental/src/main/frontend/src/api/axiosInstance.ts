@@ -1,4 +1,5 @@
 import axios from 'axios';
+// import Cookies from 'js-cookie';
 
 const TOKEN_TYPE = 'Bearer';
 let ACCESS_TOKEN = localStorage.getItem("accessToken");
@@ -38,17 +39,23 @@ axiosInstance.interceptors.response.use(
         const errorCode = error.response.status;
 
         // 401 오류 및 재시도 플래그가 없는 경우
-        if (errorCode === 401 && !originalRequest._retry) {
+        if (errorCode === 401 && !originalRequest._retry/* || errorCode === 400*/) {
             originalRequest._retry = true; // 재시도 플래그 설정
 
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
+                // const refreshToken = Cookies.get("refresh");
+                console.log("Refresh token:", refreshToken)
 
                 // 리프레시 토큰을 사용하여 새로운 액세스 토큰 요청
-                const response = await axios.post('http://localhost:8081/reissue', { token: refreshToken }, {
+                const response = await axios.post(
+                    'http://localhost:8081/reissue',
+                    { token: refreshToken },
+                    {
                     headers: { "Content-Type": "application/json" },
                     withCredentials: true
                 });
+                console.log("Refresh token response:", response)
 
                 if (response.status === 200) {
                     const newAccessToken = response.data.accessToken;
