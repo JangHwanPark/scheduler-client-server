@@ -1,8 +1,12 @@
 package com.game.rental.security.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.game.rental.security.entity.RefreshEntity;
+import com.game.rental.security.entity.RefreshEntityRepository;
 import com.game.rental.security.jwt.util.JWTUtil;
 import com.game.rental.users.dto.LoginDTO;
+import com.game.rental.users.entity.UserEntity;
+import com.game.rental.users.entity.UserEntityRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +25,7 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 @RequiredArgsConstructor
@@ -28,6 +33,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RefreshEntityRepository refreshEntityRepository;
+    private final UserEntityRepository userEntityRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -91,8 +98,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         //토큰 생성
-        String access = jwtUtil.createJwt("access", username, role, 600000L);
+        String access = jwtUtil.createJwt("access", username, role, 60000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+
+        //Refresh 토큰 저장
+        UserEntity user = userEntityRepository.findByLoginId(username);
+        addRefreshEntity(user, refresh, 86400000L);
 
         //응답 설정
         response.setHeader("access", access);
@@ -117,5 +128,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setHttpOnly(true);
 
         return cookie;
+    }
+    private void addRefreshEntity(UserEntity user, String refresh, Long expiredMs) {
+
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        RefreshEntity refreshEntity = new RefreshEntity();
+        refreshEntity.setUserEntity(user);
+        refreshEntity.setRefreshToken(refresh);
+        refreshEntity.setExpiration(date.toString());
+
+        refreshEntityRepository.save(refreshEntity);
     }
 }
