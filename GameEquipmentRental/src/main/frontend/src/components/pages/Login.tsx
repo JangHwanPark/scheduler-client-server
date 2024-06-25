@@ -18,15 +18,6 @@ interface UserInfo {
 }
 
 export default function Login() {
-    /*const initialValues: UserInput = {
-        username: "",
-        password: "",
-    };*/
-
-    /*const headers = {
-        'Content-Type': 'multipart/form-data'
-    }*/
-
     const { login, logout } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -43,7 +34,7 @@ export default function Login() {
     };
 
     const handleLogout = async () => {
-        await logout();
+        logout();
         console.log("로그아웃")
     }
 
@@ -60,15 +51,6 @@ export default function Login() {
 
     return (
         <FormContainer>
-            {/*<AuthForm
-                initialValues={initialValues}
-                endpoint="http://localhost:8081/login"
-                onSuccessMessage="로그인 성공."
-                onFailureMessage="로그인에 실패했습니다."
-                fields={["username", "password"]}
-                submitButtonText="로그인"
-                headers={headers}
-            />*/}
             <Link to="/register">회원가입</Link>
             <Link to="/admin">어드민</Link>
             <div>Form Test</div>

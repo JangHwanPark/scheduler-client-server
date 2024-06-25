@@ -31,13 +31,11 @@ export const getUserInfo = async () => {
         }
 
         // 사용자 정보 요청
-        const response = await axiosInstance.get("/user-info", {
+        return await axiosInstance.get("/user-info", {
             headers: {
                 'access': `${accessToken}`
             }
         });
-
-        return response;
     } catch (error) {
         console.error("Failed to fetch user info", error);
 

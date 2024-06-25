@@ -5,6 +5,8 @@ import {jwtDecode} from "jwt-decode";
 const TokenTimer = () => {
     const { accessToken, logout } = useAuth();
     const [remainingTime, setRemainingTime] = useState<number | null>(null);
+    const [isLogout, setIsLogout] = useState<boolean>(false);
+
 
     const getRemainingTime = (token: string | null) => {
         if (!token) return null;
@@ -19,21 +21,25 @@ const TokenTimer = () => {
         }
     };
 
+
     const updateRemainingTime = () => {
         const time = getRemainingTime(accessToken);
         if (time !== null && time > 0) {
             setRemainingTime(time);
-        } else {
+        } else if (!isLogout) {
+            setIsLogout(true);
             logout();
+
         }
     };
+
 
     useEffect(() => {
         updateRemainingTime();
         const intervalId = setInterval(updateRemainingTime, 1000); // 1초마다 갱신
-
         return () => clearInterval(intervalId);
-    }, [accessToken]);
+    }, [accessToken, isLogout]);
+
 
     return (
         <div>
