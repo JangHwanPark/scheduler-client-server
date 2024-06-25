@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -89,7 +90,7 @@ public class SecurityConfig {
                                 // 허용할 시간을 설정
                                 config.setMaxAge(3600L);
                                 // 서버에서 클라이언트로 사용자에게 JWT를 담아 넘겨줄 헤더를 지정
-                                config.setExposedHeaders(Collections.singletonList("Authorization"));
+                                config.setExposedHeaders(Arrays.asList("Access", "Set-Cookie"));
 
                                 return config;
                             }
