@@ -4,7 +4,7 @@ package com.game.rental.config;
 import com.game.rental.security.entity.RefreshEntityRepository;
 import com.game.rental.security.jwt.filter.JWTFIlter;
 import com.game.rental.security.jwt.filter.LoginFilter;
-import com.game.rental.security.jwt.filter.LogoutFilter;
+import com.game.rental.security.jwt.filter.CustomLogoutFilter;
 import com.game.rental.security.jwt.util.JWTUtil;
 import com.game.rental.users.entity.UserEntityRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -62,7 +63,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
         // jwt 필터 등록
         http
-                .addFilterAt(new JWTFIlter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFIlter(jwtUtil), LoginFilter.class);
+        // 로그아웃 필터 등록
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshEntityRepository), LogoutFilter.class);
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, refreshEntityRepository, userEntityRepository), UsernamePasswordAuthenticationFilter.class);
@@ -96,9 +100,6 @@ public class SecurityConfig {
                             }
                         })
                 );
-        // 로그아웃 필터 등록
-        http
-                .addFilterBefore(new LogoutFilter(jwtUtil, refreshEntityRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
