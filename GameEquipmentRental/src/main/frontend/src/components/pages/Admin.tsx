@@ -1,3 +1,4 @@
+import {useEffect} from "react";
 import {useNavigate} from 'react-router-dom';
 
 import {AdminAside, MainWrapper} from '../layout';
@@ -5,9 +6,7 @@ import {GeneralSection} from "../common/GeneralSection.tsx";
 import {SalesSummaryItem} from "../common/SalesSummaryItem.tsx";
 import {AdminHeader} from "../common/AdminHeader.tsx";
 import {AdminChart} from "../common/AdminChart.tsx";
-
 import {useAuth} from "../../context/AuthContext.tsx";
-
 
 const salesData = [
     { 날짜: '2024-06-01', 제품명: '제품 A', 수량: 3, 가격: '₩100,000', 총액: '₩300,000' },
@@ -40,15 +39,26 @@ export default function Admin() {
 
     const navigate = useNavigate();
     const { userInfo } = useAuth();
-    if (!userInfo || userInfo.role !== 'ROLE_ADMIN') {
-        navigate('/not-found');
+
+
+    useEffect(() => {
+        if (!userInfo || userInfo.role !== 'ROLE_ADMIN') {
+            navigate('/not-found');
+        }
+    }, [navigate, userInfo]);
+
+
+    // 로딩 스피너를 표시
+    if (!userInfo || !userInfo.user_name) {
+        return null;
     }
+
 
     return (
         <MainWrapper>
             <AdminAside/>
             <div className="admin-content">
-                <AdminHeader/>
+                <AdminHeader user_name={userInfo.user_name}/>
                 <section>
                     <div className="sales-summary">
                         <SalesSummaryItem title="총 매출" value="₩10,000,000"/>

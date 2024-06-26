@@ -21,7 +21,7 @@ export interface AuthContextType {
 
 // 사용자 정보 타입 지정
 interface UserInfo {
-    username?: string;
+    user_name?: string;
     id?: string;
     role: string;
 }
@@ -49,12 +49,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [accessToken]);
 
 
+    // 로그인
     const login = async (credentials: { username: string; password: string }) => {
         const response = await loginAPI(credentials);
         if (response && response.status === 200) {
+            // 토큰 저장 및 출력
             const accessToken = response.headers["access"];
             setAccessToken(accessToken);
             console.log("Access Token:", accessToken);
+            await fetchUserInfo();
         } else {
             console.error("Login failed with status: " + response?.status);
         }
@@ -91,11 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (response.status === 200) {
                 const newAccessToken = response.data.accessToken;
-                const newRefreshToken = response.data.refreshToken;
-
                 setAccessToken(newAccessToken);
                 localStorage.setItem("accessToken", newAccessToken);
-                localStorage.setItem("refreshToken", newRefreshToken);
             }
         }
     }
