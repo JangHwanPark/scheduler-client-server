@@ -27,8 +27,9 @@ export default function Login() {
             if (userInfo.role === "ROLE_ADMIN") {
                 alert("로그인 성공!");
                 navigate("/admin");
-            } else {
-                navigate("/");
+            } else if (userInfo.role === "ROLE_USER") {
+                alert("로그인 성공!");
+                navigate("/customer");
             }
         }
     }, [userInfo, navigate]);

@@ -8,6 +8,7 @@ import { CookiesProvider } from 'react-cookie';
 import App from './App.tsx'
 import {Register, Admin, Login} from "./components/pages";
 import {AuthProvider} from "./context/AuthContext.tsx";
+import Customer from "./components/pages/Customer.tsx";
 
 // Todo: index 페이지 변경 (로그인 페이지로)
 const routes = [{
@@ -16,6 +17,7 @@ const routes = [{
     children: [
         {index: true, element: <Login/>},
         {path: '/admin', element: <Admin/>},
+        {path: '/customer', element: <Customer/>},
         {path: '/register', element: <Register/>},
     ]
 }];
