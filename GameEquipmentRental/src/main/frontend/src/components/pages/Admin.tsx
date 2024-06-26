@@ -36,9 +36,8 @@ const memberHeaders = ['회원 ID', '이름', '이메일', '전화번호', '가�
 
 
 export default function Admin() {
-
     const navigate = useNavigate();
-    const { userInfo } = useAuth();
+    const { userInfo, logout } = useAuth();
 
 
     useEffect(() => {
@@ -53,10 +52,15 @@ export default function Admin() {
         return null;
     }
 
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+        console.log("로그아웃")
+    };
 
     return (
         <MainWrapper>
-            <AdminAside/>
+            <AdminAside onClick={handleLogout}/>
             <div className="admin-content">
                 <AdminHeader user_name={userInfo.user_name}/>
                 <section>

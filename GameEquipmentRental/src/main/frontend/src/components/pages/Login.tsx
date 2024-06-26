@@ -7,13 +7,14 @@ import InputField from "../common/InputField.tsx";
 import {FaRegUser} from "react-icons/fa";
 import {MdOutlineLock} from "react-icons/md";
 import {UserInput} from "../../types";
+import PrimaryButton from "../common/PrimaryButton.tsx";
 
 
 export default function Login() {
     const navigate = useNavigate();
 
     // Context API 사용
-    const {login, logout, userInfo} = useAuth();
+    const {login, userInfo} = useAuth();
 
     // 객체를 사용한 사용자 입력 관리
     const [values, setValues] = useState<UserInput>({
@@ -58,12 +59,6 @@ export default function Login() {
     };
 
 
-    const handleLogout = async () => {
-        logout();
-        console.log("로그아웃")
-    };
-
-
     return (
         <FormContainer>
             <form onSubmit={handleSubmit} className="form login">
@@ -83,17 +78,15 @@ export default function Login() {
                     onChange={handleChange}
                     placeholder="비밀번호를 입력하세요."
                 />
-                <button type="submit">
-                    로그인
-                </button>
+                <PrimaryButton
+                    title="로그인"
+                    type="submit"
+                />
                 <TokenTimer/>
             </form>
             <Link to="/register">
                 회원가입
             </Link>
-            <button type="submit" onClick={handleLogout}>
-                로그아웃
-            </button>
         </FormContainer>
     );
 }
