@@ -1,9 +1,13 @@
+@use "../../scss/variables";
+
 .btn-container {
+  width: 100%;
   display: inline-block;
 }
 
 .primary-btn {
-  background-color: #007bff;
+  width: 100%;
+  background-color: variables.$primary-color;
   color: white;
   border: none;
   border-radius: 4px;
@@ -13,7 +17,7 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: variables.$primary-color-hover;
   }
 
   &:focus {
@@ -22,6 +26,6 @@
   }
 
   &:active {
-    background-color: #004085;
+    background-color: variables.$secondary-color;
   }
 }

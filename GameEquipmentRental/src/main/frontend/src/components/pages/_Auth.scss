@@ -1,3 +1,5 @@
+@use "../../scss/variables";
+
 input {
   background-image: none;
   border: 0;
@@ -11,11 +13,6 @@ input {
 
 input[type="submit"] {
   cursor: pointer;
-}
-
-.form {
-  display: grid;
-  gap: 0.875rem;
 }
 
 .form input[type="password"],
@@ -34,4 +31,84 @@ input[type="submit"] {
 
 .input-field {
   display: flex;
+}
+
+
+/* Login Form */
+.login-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  h1 {
+    padding-top: 50px;
+    text-align: center;
+  }
+
+  h1:hover {
+    color: variables.$primary-color;
+    transform: scale(1.1);
+    transition: .5s;
+  }
+
+  .inner-container {
+    width: 580px;
+    height: 580px;
+    min-height: 480px;
+    margin: 40px auto 42px;
+  }
+
+  .main-contents {
+    width: 580px;
+    height: 100%;
+    margin: auto;
+    padding: 0 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+
+    .form-login {
+      width: 100%;
+    }
+
+    .input-field {
+      width: 100%;
+    }
+  }
+
+
+  /* Divider */
+  .divider {
+    width: 100%;
+    color: #8e8e8e;
+    font-weight: 600;
+    text-align: center;
+
+    span {
+      width: 40px;
+      display: inline-block;
+      font-size: 12px;
+      line-height: 1.5em;
+      text-align: center;
+    }
+  }
+
+  .divider:before,
+  .divider:after {
+    width: calc(50% - 2rem);
+    margin: 1.5rem 0;
+    display: inline-block;
+    height: 1px;
+    background-color: #e0e0e0;
+    vertical-align: middle;
+    content: "";
+  }
 }

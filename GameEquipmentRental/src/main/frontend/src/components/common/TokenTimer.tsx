@@ -44,7 +44,7 @@ const TokenTimer = () => {
         <div>
             {remainingTime !== null
                 ? (<p>남은 시간: {remainingTime} 초</p>)
-                : (<p>토큰이 만료되었습니다. 다시 로그인하세요.</p>)
+                : (<p>토큰이 만료되었습니다.</p>)
             }
         </div>
     );
