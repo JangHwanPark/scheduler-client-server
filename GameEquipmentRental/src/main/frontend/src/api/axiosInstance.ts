@@ -20,11 +20,16 @@ export const axiosInstance = axios.create({
 // 요청 인터셉터: 각 요청 전에 액세스 토큰을 최신 값으로 설정
 axiosInstance.interceptors.request.use(
     async (config) => {
-        ACCESS_TOKEN = localStorage.getItem("accessToken"); // 항상 최신 토큰을 가져옴
+
+        // 항상 최신 토큰을 가져옴
+        ACCESS_TOKEN = localStorage.getItem("accessToken");
+
         if (ACCESS_TOKEN) {
-            config.headers["Authorization"] = `${TOKEN_TYPE} ${ACCESS_TOKEN}`; // Authorization 헤더 설정
+            // Authorization 헤더 설정
+            config.headers["Authorization"] = `${TOKEN_TYPE} ${ACCESS_TOKEN}`;
         }
         return config;
+
     },
     (error) => {
         return Promise.reject(error); // 요청 오류 처리
@@ -38,12 +43,14 @@ axiosInstance.interceptors.response.use(
     (response) => {
         return response; // 정상 응답 처리
     },
+
     async (error) => {
         const originalRequest = error.config;
         const errorCode = error.response ? error.response.status : null;
 
         if (errorCode === 401 && !originalRequest._retry) {
-            originalRequest._retry = true; // 재시도 플래그 설정
+            // 재시도 플래그 설정
+            originalRequest._retry = true;
 
             try {
                 // 리프레시 토큰을 사용하여 새로운 액세스 토큰 요청
@@ -57,8 +64,10 @@ axiosInstance.interceptors.response.use(
                 );
 
                 if (response.status === 200) {
+                    console.log("res data:", response);
+
                     // 새로운 토큰을 로컬 스토리지에 저장
-                    const newAccessToken = response.data.accessToken;
+                    const newAccessToken = response.headers["access"];
                     localStorage.setItem("accessToken", newAccessToken);
                     console.log("New access token:", newAccessToken);
                     console.log("get LocalStorage accessToken:", localStorage.getItem("accessToken"));
@@ -70,6 +79,7 @@ axiosInstance.interceptors.response.use(
                     // 원래 요청을 재시도
                     return axiosInstance(originalRequest);
                 }
+
             } catch (err) {
                 // 리프레시 토큰이 유효하지 않은 경우 로그아웃 처리
                 console.error("Refresh token error", err);

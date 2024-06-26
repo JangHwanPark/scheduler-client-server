@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
-import { loginAPI, logoutAPI } from "../api/userService.ts";
+import {getUserInfo, loginAPI, logoutAPI} from "../api/userService.ts";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode";
 
@@ -15,8 +15,16 @@ export interface AuthContextType {
     logout: () => void;
     checkLogin: () => Promise<void>;
     getRemainingTime?: () => number | null;
+    fetchUserInfo: () => Promise<void>;
+    userInfo: UserInfo | null;
 }
 
+// 사용자 정보 타입 지정
+interface UserInfo {
+    username?: string;
+    id?: string;
+    role: string;
+}
 
 
 // 컨텍스트 생성
@@ -26,6 +34,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 프로바이더 생성
 export function AuthProvider({ children }: { children: ReactNode }) {
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
 
 
@@ -92,6 +101,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
 
+    // 사용자 정보 가져오기
+    const fetchUserInfo = async () => {
+        const response = await getUserInfo();
+        if (response && response.status === 200) {
+            setUserInfo(response.data);
+        } else {
+            console.error("사용자 정보 가져오기 실패");
+        }
+    };
+
+
     const getRemainingTime = (): number | null => {
         if (!accessToken) return null;
         const decoded = jwtDecode<JwtPayload>(accessToken);
@@ -102,7 +122,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
     return (
-        <AuthContext.Provider value={{ accessToken, login, logout, checkLogin, getRemainingTime }}>
+        <AuthContext.Provider value={{
+            accessToken,
+            login,
+            logout,
+            checkLogin,
+            getRemainingTime,
+            fetchUserInfo,
+            userInfo
+        }}>
             {children}
         </AuthContext.Provider>
     );

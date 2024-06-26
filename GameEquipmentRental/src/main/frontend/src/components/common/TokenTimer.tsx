@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {jwtDecode} from "jwt-decode";
 
+
 const TokenTimer = () => {
-    const { accessToken, logout } = useAuth();
+    const { accessToken } = useAuth();
     const [remainingTime, setRemainingTime] = useState<number | null>(null);
     const [isLogout, setIsLogout] = useState<boolean>(false);
 
 
     const getRemainingTime = (token: string | null) => {
         if (!token) return null;
-
         try {
             const decodedToken: { exp: number } = jwtDecode(token);
             const currentTime = Math.floor(Date.now() / 1000);
@@ -28,8 +28,7 @@ const TokenTimer = () => {
             setRemainingTime(time);
         } else if (!isLogout) {
             setIsLogout(true);
-            logout();
-
+            // logout();
         }
     };
 
@@ -43,11 +42,10 @@ const TokenTimer = () => {
 
     return (
         <div>
-            {remainingTime !== null ? (
-                <p>남은 시간: {remainingTime} 초</p>
-            ) : (
-                <p>토큰이 만료되었습니다. 다시 로그인하세요.</p>
-            )}
+            {remainingTime !== null
+                ? (<p>남은 시간: {remainingTime} 초</p>)
+                : (<p>토큰이 만료되었습니다. 다시 로그인하세요.</p>)
+            }
         </div>
     );
 };
