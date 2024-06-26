@@ -78,8 +78,7 @@ public class ReissueController {
 
         // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshEntityRepository.deleteByRefreshToken(refresh);
-        UserEntity user = userEntityRepository.findByLoginId(username);
-        addRefreshEntity(user,refresh,86400000L);
+        addRefreshEntity(username,newRefresh,86400000L);
         //response
         response.setHeader("access", newAccess);
         response.addCookie(createCookie("refresh", newRefresh));
@@ -98,12 +97,12 @@ public class ReissueController {
         return cookie;
     }
 
-    private void addRefreshEntity(UserEntity username, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
         RefreshEntity refreshEntity = new RefreshEntity();
-        refreshEntity.setUserEntity(username);
+        refreshEntity.setUsername(username);
         refreshEntity.setRefreshToken(refresh);
         refreshEntity.setExpiration(date.toString());
 
