@@ -18,13 +18,13 @@ public class RefreshEntity {
     @Column(name = "refresh_id")
     private Long id;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "refresh")
     private String refreshToken;
 
     @Column(name = "expiration")
     private String expiration;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
 }

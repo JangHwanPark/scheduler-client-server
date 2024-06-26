@@ -102,8 +102,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
         //Refresh 토큰 저장
-        UserEntity user = userEntityRepository.findByLoginId(username);
-        addRefreshEntity(user, refresh, 86400000L);
+        addRefreshEntity(username, refresh, 86400000L);
 
         //응답 설정
         response.setHeader("access", access);
@@ -129,12 +128,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         return cookie;
     }
-    private void addRefreshEntity(UserEntity user, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String user, String refresh, Long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
         RefreshEntity refreshEntity = new RefreshEntity();
-        refreshEntity.setUserEntity(user);
+        refreshEntity.setUsername(user);
         refreshEntity.setRefreshToken(refresh);
         refreshEntity.setExpiration(date.toString());
 

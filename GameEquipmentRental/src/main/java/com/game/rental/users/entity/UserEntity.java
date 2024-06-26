@@ -51,9 +51,6 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<OrdersEntity> ordersList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "userEntity")
-    private RefreshEntity refreshEntity;
-
     public UserEntity toEntity(JoinDto joinDto) {
         this.loginId = joinDto.getId();
         this.loginPassword = joinDto.getPassword();
