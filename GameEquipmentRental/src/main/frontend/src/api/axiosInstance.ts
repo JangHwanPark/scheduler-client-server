@@ -46,12 +46,10 @@ axiosInstance.interceptors.response.use(
             originalRequest._retry = true; // 재시도 플래그 설정
 
             try {
-                const refreshToken = localStorage.getItem("refreshToken");
-                console.log("Refresh token:", refreshToken);
-
+                // 리프레시 토큰을 사용하여 새로운 액세스 토큰 요청
                 const response = await axios.post(
                     'http://localhost:8081/reissue',
-                    { refreshToken },
+                    {},
                     {
                         headers: { "Content-Type": "application/json" },
                         withCredentials: true
@@ -59,12 +57,11 @@ axiosInstance.interceptors.response.use(
                 );
 
                 if (response.status === 200) {
-                    const newAccessToken = response.data.accessToken;
-                    const newRefreshToken = response.data.refreshToken;
-
                     // 새로운 토큰을 로컬 스토리지에 저장
+                    const newAccessToken = response.data.accessToken;
                     localStorage.setItem("accessToken", newAccessToken);
-                    localStorage.setItem("refreshToken", newRefreshToken);
+                    console.log("New access token:", newAccessToken);
+                    console.log("get LocalStorage accessToken:", localStorage.getItem("accessToken"));
 
                     // Axios 인스턴스 및 원래 요청의 Authorization 헤더를 업데이트
                     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
@@ -74,12 +71,10 @@ axiosInstance.interceptors.response.use(
                     return axiosInstance(originalRequest);
                 }
             } catch (err) {
-                console.error("Refresh token error", err);
-
                 // 리프레시 토큰이 유효하지 않은 경우 로그아웃 처리
+                console.error("Refresh token error", err);
                 localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                // window.location.href = '/login'; // 로그인 페이지로 리디렉션
+                // window.location.href = '/'; // 로그인 페이지로 리디렉션
                 return Promise.reject(error);
             }
         }
