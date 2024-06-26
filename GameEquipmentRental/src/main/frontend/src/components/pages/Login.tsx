@@ -1,8 +1,7 @@
-// import AuthForm from "../common/AuthForm.tsx";
+import {ChangeEvent, FormEvent, useState} from "react";
 import {Link} from "react-router-dom";
 import FormContainer from "../layout/FormContainer.tsx";
 import {useAuth} from "../../context/AuthContext.tsx";
-import {ChangeEvent, FormEvent, useState} from "react";
 import TokenTimer from "../common/TokenTimer.tsx";
 import InputField from "../common/InputField.tsx";
 import {FaRegUser} from "react-icons/fa";
@@ -11,18 +10,21 @@ import {UserInput} from "../../types";
 
 
 export default function Login() {
+    // Context API 사용
     const {login, logout, fetchUserInfo, userInfo} = useAuth();
-    // const [username, setUsername] = useState("");
-    // const [password, setPassword] = useState("");
-    const [values, setValues] = useState<UserInput>({});
+
+    // 객체를 사용한 사용자 입력 관리
+    const [values, setValues] = useState<UserInput>({
+        username: "",
+        password: ""
+    });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setValues({
-            ...values,
-            [name]: value,
+            ...values, [name]: value,
         });
-        console.log("values:", values);
+        console.log("handleChange values:", { [name]: value });
     };
 
 
@@ -61,7 +63,7 @@ export default function Login() {
                     name="username"
                     icon={<FaRegUser/>}
                     value={values.username || ""}
-                    handleChange={handleChange}
+                    onChange={handleChange}
                     placeholder="아이디를 입력하세요."
                 />
                 <InputField
@@ -69,7 +71,7 @@ export default function Login() {
                     name="password"
                     icon={<MdOutlineLock/>}
                     value={values.password || ""}
-                    handleChange={handleChange}
+                    onChange={handleChange}
                     placeholder="비밀번호를 입력하세요."
                 />
                 <button type="submit">로그인</button>

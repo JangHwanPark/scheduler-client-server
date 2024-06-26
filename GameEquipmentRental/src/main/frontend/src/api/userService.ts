@@ -1,5 +1,16 @@
 import {axiosInstance} from "./axiosInstance.ts";
 
+/* Register API */
+export const registerAPI = async (user: { id: string; password: string; name: string; phone: string }) => {
+    try {
+        // 회원가입 API 호출
+        return await axiosInstance.post("/user/join", user);
+    } catch (error) {
+        console.error("Register error", error);
+        return undefined;   // 오류 발생 시 undefined 반환
+    }
+}
+
 /** LOGIN API */
 export const loginAPI = async (credentials: { username: string; password: string }) => {
     try {

@@ -3,7 +3,7 @@ import {ChangeEvent} from "react";
 interface InputTypes {
     type: string;
     name: string;
-    handleChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     value?: any;
     icon?: any;
     placeholder?: string;
@@ -13,7 +13,7 @@ export default function InputField(
     {
         type,
         name,
-        handleChange,
+        onChange,
         value,
         icon,
         placeholder
@@ -29,7 +29,7 @@ export default function InputField(
                 type={type}
                 name={name}
                 placeholder={placeholder}
-                onChange={handleChange}
+                onChange={onChange}
                 value={value}
             />
         </div>
