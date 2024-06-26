@@ -1,5 +1,8 @@
 package com.game.rental.security;
 
+import com.game.rental.users.entity.UserEntity;
+import com.game.rental.users.entity.UserEntityRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,8 +16,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 public class SecurityTestController {
-    @GetMapping("/user-info")
+    private final UserEntityRepository userEntityRepository;
+    @GetMapping("/info")
     public ResponseEntity<?> api1() {
         // 접속한 사용자 이름 id 값
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -28,18 +33,10 @@ public class SecurityTestController {
         Map<String, String > map = new HashMap<>();
         map.put("id",name);
         map.put("role",role);
+        UserEntity user = userEntityRepository.findByLoginId(name);
+        map.put("phone_number", user.getUserPhoneNumber());
+        map.put("user_name", user.getUserName());
         return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/api2")
-    public ResponseEntity<?> api2() {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
-        return ResponseEntity.ok("api2 name : "+name +" role : "+role);
-    }
 }
