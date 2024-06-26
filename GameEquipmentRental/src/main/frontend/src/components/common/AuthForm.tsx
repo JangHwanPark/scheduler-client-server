@@ -66,7 +66,7 @@ export default function AuthForm(
                 setMessage(onSuccessMessage);
                 if (endpoint.includes("login")) {
                     const loginValues = { username: values.username || "", password: values.password || "" };
-                    await login(loginValues);
+                    await login(loginValues, password);
                 }
                 console.log("요청후 입력값:", values);
                 console.log("응답메세지:", onSuccessMessage);

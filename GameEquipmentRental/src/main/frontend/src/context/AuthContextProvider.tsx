@@ -80,6 +80,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log("userInfo:", userInfo)
 
 
+    // 로그인 설정 함수 (accessToken = jwt)
+    const loginSetting = (
+        userData: { no: number; userId: string; authList: { auth: string }[] },
+        accessToken: string | undefined
+    ) => {
+        const { no, userId, authList } = userData;
+        const roleList = authList.map((auth) => auth.auth);
+
+        console.log(`no: ${no}`);
+        console.log(`userId: ${userId}`);
+        console.log(`authList: ${authList}`);
+        console.log(`roleList: ${roleList}`);
+
+        // 헤더 설정
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+
+        // 쿠키에 jwt 저장
+        if (accessToken) Cookies.set("accessToken", accessToken);
+
+        // 로그인 상태 설정
+        setIsLogin(true);
+
+        // 유저 정보 설정
+        const updatedUserInfo = { no, userId, roleList };
+        setUserInfo(updatedUserInfo);
+
+        // 권한정보 설정
+        const updatedRoles: RoleType = {
+            isUser: false,
+            isAdmin: false,
+        };
+
+        roleList.forEach((role) => {
+            if (role === "ROLE_USER") updatedRoles.isUser = true;
+            if (role === "ROLE_ADMIN") updatedRoles.isAdmin = true;
+        });
+        setRoles(updatedRoles);
+
+        // 토큰 설정
+        if (accessToken) {
+            setAccessToken(accessToken);
+            setRefreshToken(refreshToken);
+        }
+    };
+
+
     /**
      * 벨리데이션 ( 로그인 체크 )
      * - 쿠키에 jwt 가 있는지 확인
@@ -94,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // accessToken이 없으면 로그인 상태가 아님
         if (!accessToken) {
             console.log("accessToken 없음");
-            checkLogout();
+            logoutSetting();
             return;
         }
 
@@ -143,62 +189,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
 
-
-    // 로그인 설정 함수 (accessToken = jwt)
-    const loginSetting = (
-        userData: { no: number; userId: string; authList: { auth: string }[] },
-        accessToken: string | undefined
-    ) => {
-        const { no, userId, authList } = userData;
-        const roleList = authList.map((auth) => auth.auth);
-
-        console.log(`no: ${no}`);
-        console.log(`userId: ${userId}`);
-        console.log(`authList: ${authList}`);
-        console.log(`roleList: ${roleList}`);
-
-        // 헤더 설정
-        axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-
-        // 쿠키에 jwt 저장
-        if (accessToken) Cookies.set("accessToken", accessToken);
-
-        // 로그인 상태 설정
-        setIsLogin(true);
-
-        // 유저 정보 설정
-        const updatedUserInfo = { no, userId, roleList };
-        setUserInfo(updatedUserInfo);
-
-        // 권한정보 설정
-        const updatedRoles: RoleType = {
-            isUser: false,
-            isAdmin: false,
-        };
-
-        roleList.forEach((role) => {
-            if (role === "ROLE_USER") updatedRoles.isUser = true;
-            if (role === "ROLE_ADMIN") updatedRoles.isAdmin = true;
-        });
-        setRoles(updatedRoles);
-
-        // 토큰 설정
-        if (accessToken) {
-            setAccessToken(accessToken);
-            setRefreshToken(refreshToken);
-        }
-    };
-
-
-    // 로그아웃 함수: 토큰을 상태에서 제거
-    const logout = () => {
-        // axios 헤더에서 토큰 제거
+    const logoutSetting = () => {
+        // 헤더에서 jwt 제거
         axiosInstance.defaults.headers.common.Authorization = undefined;
 
-        // 쿠키에서 토큰 제거
+        // 쿠키에서 jwt 제거
         Cookies.remove("accessToken");
 
-        // 로그인 상태 변경
+        // 로그인 상태 설정
         setIsLogin(false);
 
         // 유저 정보 초기화
@@ -213,6 +211,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // 토큰 초기화
         setAccessToken(null);
         setRefreshToken(null);
+    }
+
+
+    // 로그아웃 함수: 토큰을 상태에서 제거
+    const logout = () => {
+        // 로그인 상태 변경
+        setIsLogin(false);
     };
 
 

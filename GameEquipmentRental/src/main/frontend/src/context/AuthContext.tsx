@@ -6,7 +6,7 @@ import {AuthContext} from "./AuthContextProvider.tsx";
 // 컨텍스트 API 타입 정의
 export interface AuthContextType {
     accessToken: string | null;
-    login: (credentials: { username: string; password: string }) => Promise<void>;
+    login: (credentials: { username: string; password: string }, password: any) => Promise<void>;
     logout: () => void;
     checkLogin: () => Promise<void>;
     getRemainingTime?: () => number | null;
