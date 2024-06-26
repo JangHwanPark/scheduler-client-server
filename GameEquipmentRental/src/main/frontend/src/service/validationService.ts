@@ -26,23 +26,23 @@ export const validateTrim = (input: string | undefined): boolean => {
 
 // 사용자 입력 검증 함수
 export const validateUserInput = (userInput: UserInput): boolean => {
-    if (!validateTrim(userInput.username)) {
+    if (!validateTrim(userInput.username ?? "")) {
         alert("아이디를 입력해 주세요.");
         return false;
     }
 
-    if (!validateTrim(userInput.password)) {
+    if (!validateTrim(userInput.password ?? "")) {
         alert("비밀번호를 입력해 주세요.");
         return false;
     }
 
-    if (!validateEmail(userInput.username)) {
-        alert("이메일 형식이 올바르지 않습니다.");
+    if (!validatePassword(userInput.password ?? "")) {
+        alert("비밀번호는 8자 이상이어야 합니다.");
         return false;
     }
 
-    if (!validatePassword(userInput.password)) {
-        alert("비밀번호는 8자 이상이어야 합니다.");
+    if (!validatePasswordFormat(userInput.password ?? "")) {
+        alert("비밀번호는 대문자, 소문자, 숫자, 특수문자가 포함되어야 합니다.");
         return false;
     }
 
@@ -58,6 +58,11 @@ export const validateUserInput = (userInput: UserInput): boolean => {
 
     if (!validateTrim(userInput.phone ?? "")) {
         alert("전화번호를 입력해 주세요.");
+        return false;
+    }
+
+    if (!validateEmail(userInput.username ?? "")) {
+        alert("이메일 형식이 올바르지 않습니다.");
         return false;
     }
 
