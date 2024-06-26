@@ -1,66 +1,92 @@
-// import AuthForm from "../common/AuthForm.tsx";
-import {Link} from "react-router-dom";
+import AuthForm from "../common/AuthForm.tsx";
 import FormContainer from "../layout/FormContainer.tsx";
 import {useAuth} from "../../context/AuthContext.tsx";
-import {useState} from "react";
-import TokenTimer from "../common/TokenTimer.tsx";
-import {getUserInfo} from "../../api/userService.ts";
+import {FormEvent, useState} from "react";
+import {AdminHeader} from "../common/AdminHeader.tsx";
 
-/*interface UserInput {
+interface UserInput {
     username: string;
     password: string;
-}*/
-
-// 사용자 정보 타입 정의
-interface UserInfo {
-    id: string;
-    role: string;
 }
 
 export default function Login() {
-    const {login, logout} = useAuth();
+    const initialValues: UserInput = {
+        username: "",
+        password: "",
+    };
+
+    const headers = {
+        //'Content-Type': 'multipart/form-data'
+        'Content-Type': 'application/json',
+    }
+
+
+    const {login} = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = async (event: React.FormEvent) => {
+
+    const onLogin = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        /**
+         * TS2339: Property username does not exist on type EventTarget
+         * 이벤트 핸들러의 target 속성 사용시 발생
+         * target 기본 타입 = EventTarget 이며 username 을 포함하지 않음
+         *
+         * 문제 해결 방법
+         * - 이벤트 타입 명확하게 지정
+         * - target 을 적절하게 타입 캐스팅 해야함
+         */
+        const form = e.target as HTMLFormElement;
+        const username = form.username.value;
+        const password = form.password.value;
+        /**
+         * const username = (form.elements.namedItem("username") as HTMLInputElement).value;
+         * const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+         */
+
+        console.log("username:", username);
+        console.log("password:", password);
+        login(username, password)
+    }
+
+
+    /*const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            await login({username, password});
+            await login({ username, password });
             alert("로그인 성공!");
         } catch (error) {
             console.error("로그인 실패", error);
             alert("로그인 실패");
         }
-    };
+    };*/
 
-    const handleLogout = async () => {
-        logout();
-        console.log("로그아웃")
-    }
-
-    /* 액세스 토큰 갱신을 위한 테스트 로직 */
-    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-    const fetchUserInfo = async () => {
-        const response = await getUserInfo();
-        if (response && response.status === 200) {
-            setUserInfo(response.data);
-        } else {
-            console.error("사용자 정보 가져오기 실패");
-        }
-    };
 
     return (
         <FormContainer>
-            {userInfo?.role === "ADMIN" && (<Link to="/admin">어드민</Link>)}
-            <Link to="/register">회원가입</Link>
+            <AuthForm
+                initialValues={initialValues}
+                endpoint="http://localhost:8081/login"
+                onSuccessMessage="로그인 성공."
+                onFailureMessage="로그인에 실패했습니다."
+                fields={["username", "password"]}
+                submitButtonText="로그인"
+                headers={headers}
+            />
+
             <div>Form Test</div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => onLogin(e)}>
                 <div>
                     <label>
                         아이디:
                         <input
                             type="text"
+                            id="username"
+                            name="username"
                             value={username}
+                            required
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </label>
@@ -70,29 +96,18 @@ export default function Login() {
                         비번:
                         <input
                             type="password"
+                            id="password"
+                            name="password"
                             value={password}
+                            required
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </label>
                 </div>
                 <button type="submit">로그인</button>
-                <TokenTimer/>
-                <div></div>
             </form>
-            <button type="submit" onClick={handleLogout}>로그아웃</button>
-            <div>
-                <button onClick={fetchUserInfo}>사용자 정보 가져오기</button>
-                {userInfo ? (
-                    <div>
-                        <h3>사용자 정보:</h3>
-                        <p>이름: {userInfo.id}</p>
-                        <p>권한: {userInfo.role}</p>
-                        {/*<p>권한: {userInfo.role}</p>*/}
-                    </div>
-                ) : (
-                    <p>로그인 ㄱㄱ.</p>
-                )}
-            </div>
+            <div>로그인 헤더 (테스트용)</div>
+            <AdminHeader/>
         </FormContainer>
     );
 }

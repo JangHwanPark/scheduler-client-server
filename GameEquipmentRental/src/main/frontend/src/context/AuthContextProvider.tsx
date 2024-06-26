@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState } from "react";
-import api from "../api/axiosInstance.ts";
+import {axiosInstance} from "../api/axiosInstance.ts";
 import Cookies from "js-cookie";
 import * as auth from "../api/auth.ts";
 import {AxiosResponse} from "axios";
@@ -14,6 +14,7 @@ export interface AuthContextType {
     isLogin: boolean;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
+    checkLogin: () => Promise<void>;
 }
 
 interface RoleType {
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      * - 쿠키에 jwt 가 있는지 확인
      * - jwt 로 사용자 정보를 요청
      */
-    const loginValidation = async () => {
+    const checkLogin = async () => {
 
         // 쿠키에서 jwt 가져오기
         const accessToken = Cookies.get("accessToken");
@@ -93,12 +94,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // accessToken이 없으면 로그인 상태가 아님
         if (!accessToken) {
             console.log("accessToken 없음");
-            logout();
+            checkLogout();
             return;
         }
 
         // 헤더에 jwt 설정 (header 에 jwt 담기)
-        api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
         // 사용자 정보 요청
         const response: UserInfoResponse = await auth.getUserInfoApi()
@@ -157,7 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log(`roleList: ${roleList}`);
 
         // 헤더 설정
-        api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
         // 쿠키에 jwt 저장
         if (accessToken) Cookies.set("accessToken", accessToken);
@@ -192,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 로그아웃 함수: 토큰을 상태에서 제거
     const logout = () => {
         // axios 헤더에서 토큰 제거
-        api.defaults.headers.common.Authorization = undefined;
+        axiosInstance.defaults.headers.common.Authorization = undefined;
 
         // 쿠키에서 토큰 제거
         Cookies.remove("accessToken");
@@ -224,7 +225,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             accessToken,
             refreshToken,
             login,
-            logout
+            logout,
+            checkLogin
         }}>
             {children}
         </AuthContext.Provider>

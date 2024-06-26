@@ -1,23 +1,23 @@
-import api from './axiosInstance';
+import {axiosInstance} from './axiosInstance';
 
 
 // 로그인
 export const loginApi = () => {
-    return api.post(`http://localhost:8081/login`);
+    return axiosInstance.post(`http://localhost:8081/login`);
 }
 
 
 // 회원가입
-export const registerApi = (data: never) => api.post(`/users`, data)
+export const registerApi = (data: never) => axiosInstance.post(`/users`, data)
 
 
 // 사용자 정보
-export const getUserInfoApi = () => api.get(`/users/info`)
+export const getUserInfoApi = () => axiosInstance.get(`/users/info`)
 
 
 // 회원정보 수정
-export const updateUserApi = (userId: number, data: never) => api.put(`/users/${userId}`, data)
+export const updateUserApi = (userId: number, data: never) => axiosInstance.put(`/users/${userId}`, data)
 
 
 // 회원탈퇴
-export const removeUserApi = (userId: number) => api.delete(`/users/${userId}`)
+export const removeUserApi = (userId: number) => axiosInstance.delete(`/users/${userId}`)

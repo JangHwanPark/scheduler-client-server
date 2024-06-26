@@ -1,12 +1,7 @@
-import { createContext, useState, useEffect, ReactNode, useContext } from "react";
-import { loginAPI, logoutAPI } from "../api/userService.ts";
-import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { useContext } from "react";
+import {AuthContext} from "./AuthContextProvider.tsx";
 
-// JWT 디코딩 타입 정의
-interface JwtPayload {
-    exp: number;
-}
+
 
 // 컨텍스트 API 타입 정의
 export interface AuthContextType {
@@ -17,15 +12,17 @@ export interface AuthContextType {
     getRemainingTime?: () => number | null;
 }
 
-
-
-// 컨텍스트 생성
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-
+// useAuth 훅: AuthContext를 쉽게 사용할 수 있도록 해주는 훅
+export const useAuth = (): AuthContextType => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
+};
 
 // 프로바이더 생성
-export function AuthProvider({ children }: { children: ReactNode }) {
+/*export function AuthProvider({ children }: { children: ReactNode }) {
     const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
 
 
@@ -106,15 +103,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             {children}
         </AuthContext.Provider>
     );
-}
-
-
-
-// useAuth 훅: AuthContext를 쉽게 사용할 수 있도록 해주는 훅
-export const useAuth = (): AuthContextType => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-};
+}*/
