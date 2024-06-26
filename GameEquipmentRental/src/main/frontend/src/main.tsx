@@ -9,11 +9,12 @@ import App from './App.tsx'
 import {Register, Admin, Login} from "./components/pages";
 import {AuthProvider} from "./context/AuthContext.tsx";
 import Customer from "./components/pages/Customer.tsx";
+import NotFound from "./components/pages/not-found.tsx";
 
-// Todo: index 페이지 변경 (로그인 페이지로)
 const routes = [{
     path: '/',
     element: <App/>,
+    errorElement: <NotFound/>,
     children: [
         {index: true, element: <Login/>},
         {path: '/admin', element: <Admin/>},
