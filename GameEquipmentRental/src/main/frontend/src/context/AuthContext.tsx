@@ -104,11 +104,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 사용자 정보 가져오기
     const fetchUserInfo = async () => {
         const response = await getUserInfo();
-        if (response && response.status === 200) {
-            setUserInfo(response.data);
-        } else {
-            console.error("사용자 정보 가져오기 실패");
-        }
+        response && response.status === 200
+            ? setUserInfo(response.data)
+            : console.error("사용자 정보 가져오기 실패");
     };
 
 

@@ -1,8 +1,13 @@
+import {useNavigate} from 'react-router-dom';
+
 import {AdminAside, MainWrapper} from '../layout';
 import {GeneralSection} from "../common/GeneralSection.tsx";
 import {SalesSummaryItem} from "../common/SalesSummaryItem.tsx";
 import {AdminHeader} from "../common/AdminHeader.tsx";
 import {AdminChart} from "../common/AdminChart.tsx";
+
+import {useAuth} from "../../context/AuthContext.tsx";
+
 
 const salesData = [
     { 날짜: '2024-06-01', 제품명: '제품 A', 수량: 3, 가격: '₩100,000', 총액: '₩300,000' },
@@ -24,12 +29,21 @@ const memberData = [
     { '회원 ID': 'user02', 이름: '김철수', 이메일: 'kim@example.com', 전화번호: '010-9876-5432', 가입일: '2023-02-15' }
 ];
 
+
 const salesHeaders = ['날짜', '제품명', '수량', '가격', '총액'];
 const deviceHeaders = ['기기 ID', '기기 이름', '상태'];
 const rentalHeaders = ['대여 ID', '회원 ID', '기기 ID', '대여일', '반납일', '상태'];
 const memberHeaders = ['회원 ID', '이름', '이메일', '전화번호', '가입일'];
 
+
 export default function Admin() {
+
+    const navigate = useNavigate();
+    const { userInfo } = useAuth();
+    if (!userInfo || userInfo.role !== 'ROLE_ADMIN') {
+        navigate('/not-found');
+    }
+
     return (
         <MainWrapper>
             <AdminAside/>
