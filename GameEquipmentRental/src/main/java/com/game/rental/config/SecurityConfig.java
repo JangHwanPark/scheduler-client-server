@@ -1,9 +1,12 @@
 package com.game.rental.config;
 
 
+import com.game.rental.security.entity.RefreshEntityRepository;
 import com.game.rental.security.jwt.filter.JWTFIlter;
 import com.game.rental.security.jwt.filter.LoginFilter;
+import com.game.rental.security.jwt.filter.CustomLogoutFilter;
 import com.game.rental.security.jwt.util.JWTUtil;
+import com.game.rental.users.entity.UserEntityRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -30,6 +34,8 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshEntityRepository refreshEntityRepository;
+    private final UserEntityRepository userEntityRepository;
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -52,16 +58,19 @@ public class SecurityConfig {
                         /**
                          * 다음 코드는 URL 호출에 대해 권한을 지정하는 코드 입니다.
                          * */
-                        .requestMatchers("/user/**", "/page/**").permitAll()
+                        .requestMatchers("/user/**", "/page/**","/reissue").permitAll()
                         .requestMatchers("/api1").hasRole("USER")
                         .requestMatchers("/admin/**", "/api2").hasRole("ADMIN")
                         .anyRequest().authenticated());
         // jwt 필터 등록
         http
-                .addFilterAt(new JWTFIlter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFIlter(jwtUtil), LoginFilter.class);
+        // 로그아웃 필터 등록
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshEntityRepository), LogoutFilter.class);
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, refreshEntityRepository, userEntityRepository), UsernamePasswordAuthenticationFilter.class);
         // jwt 를 이용하여 로그인 로직을 구현시 session 을 사용하지 않아 session을 stateless 상태로 설정
         http
                 .sessionManagement((session) -> session
@@ -86,7 +95,7 @@ public class SecurityConfig {
                                 // 허용할 시간을 설정
                                 config.setMaxAge(3600L);
                                 // 서버에서 클라이언트로 사용자에게 JWT를 담아 넘겨줄 헤더를 지정
-                                config.setExposedHeaders(Collections.singletonList("Authorization"));
+                                config.setExposedHeaders(Arrays.asList("Access", "Set-Cookie"));
 
                                 return config;
                             }

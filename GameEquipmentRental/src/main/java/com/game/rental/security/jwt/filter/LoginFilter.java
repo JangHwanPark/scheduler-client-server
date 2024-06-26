@@ -1,8 +1,12 @@
 package com.game.rental.security.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.game.rental.security.entity.RefreshEntity;
+import com.game.rental.security.entity.RefreshEntityRepository;
 import com.game.rental.security.jwt.util.JWTUtil;
 import com.game.rental.users.dto.LoginDTO;
+import com.game.rental.users.entity.UserEntity;
+import com.game.rental.users.entity.UserEntityRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +25,7 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 @RequiredArgsConstructor
@@ -28,6 +33,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RefreshEntityRepository refreshEntityRepository;
+    private final UserEntityRepository userEntityRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -38,9 +45,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             ObjectMapper objectMapper = new ObjectMapper();
             ServletInputStream inputStream = request.getInputStream();
             String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-
-            // 디버깅 로그 추가
-            System.out.println("Request Body: " + messageBody);
             loginDTO = objectMapper.readValue(messageBody, LoginDTO.class);
 
         } catch (IOException e) {
@@ -57,8 +61,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        String password = obtainPassword(request);
 
         // 요청이 잘 왔는지 확인 하기 위한 코드
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
+        System.out.println(username);
+        System.out.println(password);
 
         //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
@@ -87,26 +91,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        response.addHeader("Authorization", "Bearer " + token);
         //유저 정보
         String username = authentication.getName();
-        System.out.println("username: " + username);
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        // 토큰 생성
-        String access = jwtUtil.createJwt("access", username, role, 600000L);
+        //토큰 생성
+        String access = jwtUtil.createJwt("access", username, role, 60000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
-        System.out.println("Access Token: " + access);
-        System.out.println("Refresh Token: " + refresh);
+        //Refresh 토큰 저장
+        UserEntity user = userEntityRepository.findByLoginId(username);
+        addRefreshEntity(user, refresh, 86400000L);
 
         //응답 설정
         response.setHeader("access", access);
-        response.setHeader("refresh", refresh);
         response.addCookie(createCookie("refresh", refresh));
-
-
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -121,11 +122,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setMaxAge(24*60*60);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;
+    }
+    private void addRefreshEntity(UserEntity user, String refresh, Long expiredMs) {
+
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        RefreshEntity refreshEntity = new RefreshEntity();
+        refreshEntity.setUserEntity(user);
+        refreshEntity.setRefreshToken(refresh);
+        refreshEntity.setExpiration(date.toString());
+
+        refreshEntityRepository.save(refreshEntity);
     }
 }

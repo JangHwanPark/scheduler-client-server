@@ -1,19 +1,45 @@
-import axiosInstance from './axiosInstance';
+import {axiosInstance} from "./axiosInstance.ts";
 
-interface UserInput {
-    id: string;
-    password: string;
-    passwordConfirm?: string;
-    name?: string;
-    phoneNumber?: string;
-}
-
-export const registerUser = async (userData: UserInput) => {
-    const response = await axiosInstance.post('/user/join', userData);
-    return response.data;
+/** LOGIN API */
+export const loginAPI = async (credentials: { username: string; password: string }) => {
+    try {
+        // 로그인 API 호출
+        return await axiosInstance.post("/login", credentials);
+    } catch (error) {
+        console.error("Login error", error);
+        return undefined;   // 오류 발생 시 undefined 반환
+    }
 };
 
-export const loginUser = async (userData: UserInput) => {
-    const response = await axiosInstance.post('/login', userData);
-    return response.data;
+/** LOGOUT API */
+export const logoutAPI = async () => {
+    try {
+        // 로그아웃 API 호출
+        return await axiosInstance.post("/logout");
+    } catch (error) {
+        console.error("Logout error", error);
+        return undefined;   // 오류 발생 시 undefined 반환
+    }
+};
+
+/* Get User info */
+export const getUserInfo = async () => {
+    try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+            throw new Error("No access token found");
+        }
+
+        // 사용자 정보 요청
+        return await axiosInstance.get("/user-info", {
+            headers: {
+                'access': `${accessToken}`
+            }
+        });
+    } catch (error) {
+        console.error("Failed to fetch user info", error);
+
+        // 오류 발생 시 undefined 반환
+        return undefined;
+    }
 };
