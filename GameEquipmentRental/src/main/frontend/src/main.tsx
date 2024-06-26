@@ -6,7 +6,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 // Page Components
 import App from './App.tsx'
 import {Register, Admin, Login} from "./components/pages";
-import {AuthProvider} from "./context/AuthContext.tsx";
+import {AuthProvider} from "./context/AuthContextProvider.tsx";
 
 // Todo: index 페이지 변경 (로그인 페이지로)
 const routes = [{

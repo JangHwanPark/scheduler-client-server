@@ -1,8 +1,8 @@
 import AuthForm from "../common/AuthForm.tsx";
-import {Link} from "react-router-dom";
 import FormContainer from "../layout/FormContainer.tsx";
 import {useAuth} from "../../context/AuthContext.tsx";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
+import {AdminHeader} from "../common/AdminHeader.tsx";
 
 interface UserInput {
     username: string;
@@ -19,11 +19,40 @@ export default function Login() {
         //'Content-Type': 'multipart/form-data'
         'Content-Type': 'application/json',
     }
-    const { login, accessToken, refreshToken } = useAuth();
+
+
+    const {login} = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = async (event: React.FormEvent) => {
+
+    const onLogin = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        /**
+         * TS2339: Property username does not exist on type EventTarget
+         * 이벤트 핸들러의 target 속성 사용시 발생
+         * target 기본 타입 = EventTarget 이며 username 을 포함하지 않음
+         *
+         * 문제 해결 방법
+         * - 이벤트 타입 명확하게 지정
+         * - target 을 적절하게 타입 캐스팅 해야함
+         */
+        const form = e.target as HTMLFormElement;
+        const username = form.username.value;
+        const password = form.password.value;
+        /**
+         * const username = (form.elements.namedItem("username") as HTMLInputElement).value;
+         * const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+         */
+
+        console.log("username:", username);
+        console.log("password:", password);
+        login(username, password)
+    }
+
+
+    /*const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
             await login({ username, password });
@@ -32,7 +61,8 @@ export default function Login() {
             console.error("로그인 실패", error);
             alert("로그인 실패");
         }
-    };
+    };*/
+
 
     return (
         <FormContainer>
@@ -45,18 +75,18 @@ export default function Login() {
                 submitButtonText="로그인"
                 headers={headers}
             />
-            <Link to="/register">회원가입</Link>
-            <Link to="/admin">어드민</Link>
+
             <div>Form Test</div>
-            {accessToken ? <p>Access Token: {accessToken}</p> : <p>Access Token: 로그인 ㄱㄱ</p>}
-            {refreshToken ? <p>Refresh Token: {refreshToken}</p> : <p>Refresh Token: 로그인 ㄱㄱ</p>}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => onLogin(e)}>
                 <div>
                     <label>
                         아이디:
                         <input
                             type="text"
+                            id="username"
+                            name="username"
                             value={username}
+                            required
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </label>
@@ -66,13 +96,18 @@ export default function Login() {
                         비번:
                         <input
                             type="password"
+                            id="password"
+                            name="password"
                             value={password}
+                            required
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </label>
                 </div>
                 <button type="submit">로그인</button>
             </form>
+            <div>로그인 헤더 (테스트용)</div>
+            <AdminHeader/>
         </FormContainer>
     );
 }
