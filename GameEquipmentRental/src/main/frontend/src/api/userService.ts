@@ -42,7 +42,7 @@ export const getUserInfo = async () => {
         }
 
         // 사용자 정보 요청
-        return await axiosInstance.get("/user-info", {
+        return await axiosInstance.get("/info", {
             headers: {
                 'access': `${accessToken}`
             }
