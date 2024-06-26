@@ -2,10 +2,7 @@ import { Link } from "react-router-dom";
 import {FiUsers} from "react-icons/fi";
 import {LuGamepad2} from "react-icons/lu";
 import {HiMiniCubeTransparent} from "react-icons/hi2";
-
-interface AdminAsideProps {
-    onClick: () => void;
-}
+import SignOutButton from "../common/SignOutButton.tsx";
 
 const sideMenu = [
     {
@@ -25,7 +22,7 @@ const sideMenu = [
     }
 ];
 
-export default function AdminAside({ onClick }: AdminAsideProps) {
+export default function AdminAside() {
     return (
         <aside className="admin-aside">
             <h1 className="main-header-title">ATTACK</h1>
@@ -40,10 +37,8 @@ export default function AdminAside({ onClick }: AdminAsideProps) {
                         </li>
                     ))}
                     <li className="admin-aside-nav-list-item">
-                        <button onClick={onClick} className="admin-aside-nav-list-item-link logout-button">
-                            <HiMiniCubeTransparent/>
-                            로그아웃
-                        </button>
+                        <HiMiniCubeTransparent/>
+                        <SignOutButton className="admin-aside-nav-list-item-link logout-button"/>
                     </li>
                 </ul>
             </nav>
