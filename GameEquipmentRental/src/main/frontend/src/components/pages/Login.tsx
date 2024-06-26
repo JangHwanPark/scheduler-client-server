@@ -61,7 +61,11 @@ export default function Login() {
 
     return (
         <div className="login-container">
-            <h1>Spring Security x JWT x React</h1>
+            <h1>
+                <span className="spring">Spring Security</span>
+                <span> x JWT x </span>
+                <span className="react">React</span>
+            </h1>
             <FormContainer>
                 <main className="main-contents">
                     {/* Login Form */}

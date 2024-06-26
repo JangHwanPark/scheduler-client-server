@@ -50,9 +50,18 @@ input[type="submit"] {
   }
 
   h1:hover {
-    color: variables.$primary-color;
     transform: scale(1.1);
     transition: .5s;
+
+    span.spring {
+      color: variables.$primary-color;
+      transition: .5s;
+    }
+
+    span.react {
+      color: variables.$react-color;
+      transition: .5s;
+    }
   }
 
   .inner-container {
@@ -75,12 +84,27 @@ input[type="submit"] {
     border: 1px solid #e0e0e0;
     border-radius: 5px;
 
+
+    /* 폼 디자인 */
     .form-login {
       width: 100%;
-    }
 
-    .input-field {
-      width: 100%;
+      .btn-container,
+      .input-field {
+        margin-top: 1rem;
+      }
+
+      .input-field, input {
+        width: 100%;
+      }
+
+      .input-field, input {
+        background: none;
+      }
+
+      input:focus {
+        border-bottom: 1px solid #8e8e8e;
+      }
     }
   }
 
