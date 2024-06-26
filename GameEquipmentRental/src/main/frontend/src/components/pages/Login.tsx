@@ -60,61 +60,52 @@ export default function Login() {
 
 
     return (
-        <div className="login-container">
-            <h1>
-                <span className="spring">Spring Security</span>
-                <span> x JWT x </span>
-                <span className="react">React</span>
-            </h1>
-            <FormContainer>
-                <main className="main-contents">
-                    {/* Login Form */}
-                    <form onSubmit={handleSubmit} className="form-login login">
-                        <InputField
-                            type="text"
-                            name="username"
-                            icon={<FaRegUser/>}
-                            value={values.username || ""}
-                            onChange={handleChange}
-                            placeholder="아이디를 입력하세요."
-                        />
-                        <InputField
-                            type="text"
-                            name="password"
-                            icon={<MdOutlineLock/>}
-                            value={values.password || ""}
-                            onChange={handleChange}
-                            placeholder="비밀번호를 입력하세요."
-                        />
-                        <PrimaryButton
-                            title="로그인"
-                            type="submit"
-                        />
-                    </form>
+        <FormContainer>
+            {/* Login Form */}
+            <form onSubmit={handleSubmit} className="form-login login">
+                <InputField
+                    type="text"
+                    name="username"
+                    icon={<FaRegUser/>}
+                    value={values.username || ""}
+                    onChange={handleChange}
+                    placeholder="아이디를 입력하세요."
+                />
+                <InputField
+                    type="text"
+                    name="password"
+                    icon={<MdOutlineLock/>}
+                    value={values.password || ""}
+                    onChange={handleChange}
+                    placeholder="비밀번호를 입력하세요."
+                />
+                <PrimaryButton
+                    title="로그인"
+                    type="submit"
+                />
+            </form>
 
-                    {/* Remember me */}
-                    <div>
-                        <label htmlFor="">
-                            <input type="checkbox"/>
-                            비밀번호 저장하기
-                        </label>
-                    </div>
+            {/* Remember me */}
+            <div>
+                <label htmlFor="">
+                    <input type="checkbox"/>
+                    비밀번호 저장하기
+                </label>
+            </div>
 
-                    {/* divider */}
-                    <span className="divider">
+            {/* divider */}
+            <span className="divider">
                         <span>OR</span>
                     </span>
 
-                    {/* Social Login */}
-                    <button onClick={() => alert("준비중 입니다.")}>Login</button>
+            {/* Social Login */}
+            <button onClick={() => alert("준비중 입니다.")}>Login</button>
 
-                    {/* Register */}
-                    <div style={{width: "100%", display: "flex", justifyContent: "space-around"}}>
-                        <small><Link to="/register">회원가입</Link></small>
-                        <TokenTimer/>
-                    </div>
-                </main>
-            </FormContainer>
-        </div>
+            {/* Register */}
+            <div style={{width: "100%", display: "flex", justifyContent: "space-around"}}>
+                <small><Link to="/register">회원가입</Link></small>
+                <TokenTimer/>
+            </div>
+        </FormContainer>
     );
 }

@@ -6,6 +6,7 @@ import {MdOutlineDriveFileRenameOutline, MdOutlineLock} from "react-icons/md";
 import {FaPhoneFlip} from "react-icons/fa6";
 import InputField from "../common/InputField.tsx";
 import {registerAPI} from "../../api/userService.ts";
+import PrimaryButton from "../common/PrimaryButton.tsx";
 
 // 사용자 입력 타입 정의
 interface UserInputTypes {
@@ -46,21 +47,21 @@ export default function Register() {
     });
 
 
+    /* 입력 상태 변경 */
     const handleChange = (e: {
         target: { name: any; value: any; };
     }) => {
-        console.log("handleChange")
         const {name, value} = e.target;
         setValues({
             ...values, [name]: value,
         });
     }
 
+    /* 폼 제출 */
     const handleSubmit = async (e: {
         preventDefault: () => void;
     }) => {
         e.preventDefault();
-        console.log("요청전 입력값:", values);
         try {
             await registerAPI(values);
             alert("회원가입이 완료되었습니다.");
@@ -71,7 +72,14 @@ export default function Register() {
 
     return (
         <FormContainer>
-            <form onSubmit={handleSubmit} className="form login">
+            {/* Navigation Button */}
+            <div>
+                <span>이미 계정이 있으신가요?</span>&nbsp;
+                <Link to="/">여기에서 로그인하세요</Link>
+            </div>
+
+            {/* Register Form */}
+            <form onSubmit={handleSubmit} className="form-login login">
                 <InputField
                     icon={iconMap.id}
                     type="text"
@@ -112,11 +120,8 @@ export default function Register() {
                     onChange={handleChange}
                     value={values.phone || ""}
                 />
-                <button>
-                    회원가입
-                </button>
+                <PrimaryButton title={"회원가입"} type={"submit"}/>
             </form>
-            <Link to="/">로그인</Link>
         </FormContainer>
     );
 }
