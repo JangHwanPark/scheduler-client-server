@@ -1,21 +1,31 @@
 import {UserInput} from "../types";
 
+// 이메일 형식 검사 (정규식 사용)
 export const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(String(email).toLowerCase());
 };
 
+// 비밀번호 길이 검사
 export const validatePassword = (password: string): boolean => {
     return password.length >= 8;
 };
 
+// 비밀번호 형식 검사
+export const validatePasswordFormat = (password: string): boolean => {
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    return re.test(password);
+}
+
+// 공백 검사
 export const validateTrim = (input: string | undefined): boolean => {
     if (input === undefined) return false;
     return input.trim() !== "";
 }
 
+
 export const validateUserInput = (userInput: UserInput): boolean => {
-    if (!validateTrim(userInput.id)) {
+    if (!validateTrim(userInput.username)) {
         alert("아이디를 입력해 주세요.");
         return false;
     }

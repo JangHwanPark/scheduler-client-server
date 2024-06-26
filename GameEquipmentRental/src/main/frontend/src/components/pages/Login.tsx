@@ -8,6 +8,7 @@ import {FaRegUser} from "react-icons/fa";
 import {MdOutlineLock} from "react-icons/md";
 import {UserInput} from "../../types";
 import PrimaryButton from "../common/PrimaryButton.tsx";
+import {validateUserInput} from "../../service";
 
 
 export default function Login() {
@@ -38,9 +39,7 @@ export default function Login() {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
-        setValues({
-            ...values, [name]: value,
-        });
+        setValues({...values, [name]: value,});
         console.log("handleChange values:", {[name]: value});
     };
 
@@ -48,6 +47,7 @@ export default function Login() {
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         try {
+            validateUserInput(values);
             await login({
                 username: values.username || "",
                 password: values.password || ""
